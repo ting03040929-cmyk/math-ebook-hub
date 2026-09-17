@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國中數學 七上 1-1 正數與負數 - 雙模式自製電子書（支援語音報讀）</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f7fc;
+      font-family: "Times New Roman", "標楷體", "DFKai-SB", "BiauKai", serif;
+      font-size: 14pt;
+      line-height: 1.45;
+      color: #0f172a;
+      user-select: auto;
+    }
+
+    /* 課堂懸浮工具列 (純 Emoji 極簡膠囊) */
+    .classroom-toolbar {
+      position: fixed;
+      top: 14px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 4px 8px;
+      border-radius: 40px;
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      box-shadow: 0 4px 22px rgba(0, 0, 0, 0.12);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .tool-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+      color: #334155;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+      user-select: none;
+    }
+    .tool-btn:hover {
+      background: #f1f5f9;
+      transform: scale(1.1);
+    }
+    .tool-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .btn-toggle-ans.active {
+      background: #eff6ff;
+      border-color: #0284c7;
+    }
+    .toolbar-divider {
+      width: 1px;
+      height: 18px;
+      background: #cbd5e1;
+      margin: 0 3px;
+    }
+
+    /* 語音面板 (TTS Options) */
+    .tts-options {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      margin-left: 2px;
+    }
+    .tts-speed-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .tts-speed-btn.active {
+      background: #0284c7;
+      color: #fff;
+      border-color: #0284c7;
+    }
+
+    /* 單題/單句朗讀小按鈕 */
+    .tts-play-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      font-size: 13px;
+      border-radius: 50%;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #0284c7;
+      cursor: pointer;
+      margin-right: 6px;
+      vertical-align: middle;
+      transition: all 0.15s;
+      user-select: none;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .tts-play-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      transform: scale(1.15);
+    }
+    .tts-play-btn.playing {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+      animation: ttsPulse 1s infinite;
+    }
+    @keyframes ttsPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    /* 正在朗讀的視覺高亮 */
+    .speaking {
+      background-color: #fef08a !important;
+      box-shadow: 0 0 0 2px #facc15 !important;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+
+    /* 目錄跳轉選單 (TOC Floating Menu) */
+    .toc-menu {
+      display: none;
+      position: absolute;
+      top: 46px;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      padding: 6px 0;
+      min-width: 280px;
+      max-height: 420px;
+      overflow-y: auto;
+      z-index: 10000;
+    }
+    .toc-menu.show {
+      display: block;
+      animation: tocFadeIn 0.15s ease-out;
+    }
+    @keyframes tocFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toc-menu-title {
+      padding: 6px 16px 8px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #64748b;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .toc-menu-item {
+      padding: 8px 16px;
+      font-size: 14px;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.12s, color 0.12s;
+    }
+    .toc-menu-item:hover {
+      background: #eff6ff;
+      color: #0284c7;
+      font-weight: bold;
+    }
+    .toc-page-badge {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: normal;
+    }
+    .toc-menu-item:hover .toc-page-badge {
+      color: #0284c7;
+    }
+
+    /* 畫筆面板 */
+    .pen-options {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      margin-left: 2px;
+    }
+    .color-picker {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .color-dot.active {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 2px #0f172a;
+    }
+    .sub-divider {
+      width: 1px;
+      height: 14px;
+      background: #cbd5e1;
+      margin: 0 2px;
+    }
+    .size-picker {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .size-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .size-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+
+    /* A4 頁面容器 */
+    .pages-container {
+      padding: 16px 0 40px 0;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 11mm 14mm 12mm 14mm;
+      margin: 0 auto 20px auto;
+      background: #ffffff;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+      page-break-after: always;
+      break-after: page;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* 全頁透明畫布 */
+    .drawing-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 60;
+      pointer-events: none;
+    }
+    body.pen-mode .drawing-canvas {
+      pointer-events: auto;
+      cursor: crosshair;
+    }
+
+    /* 頁首與頁尾 */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid #0f4c81;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .main-title {
+      font-size: 16pt;
+      font-weight: bold;
+      color: #0f4c81;
+      letter-spacing: 0.5px;
+    }
+    .user-info {
+      font-size: 12pt;
+      color: #334155;
+      letter-spacing: 1px;
+    }
+    .page-footer {
+      position: absolute;
+      bottom: 6mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11pt;
+      color: #64748b;
+    }
+
+    /* 關卡主題橫幅 */
+    .section-banner {
+      font-size: 14pt;
+      font-weight: bold;
+      background: #e0f2fe;
+      color: #0369a1;
+      border-left: 6px solid #0284c7;
+      padding: 4px 10px;
+      margin: 4px 0 8px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quest-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 11pt;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    /* 觀念錨點資訊卡 (Concept Card) */
+    .concept-box {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .concept-title {
+      font-weight: bold;
+      color: #0f4c81;
+      margin-bottom: 4px;
+      font-size: 13.5pt;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .concept-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12.5pt;
+      text-align: center;
+    }
+
+    /* 題目互動項目 */
+    .interactive-item {
+      padding: 4px 6px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      transition: background 0.15s;
+      display: flex;
+      align-items: flex-start;
+    }
+    body:not(.pen-mode) .interactive-item {
+      cursor: pointer;
+    }
+    body:not(.pen-mode) .interactive-item:hover {
+      background-color: #f8fafc;
+      outline: 1.5px dashed #93c5fd;
+    }
+    .item-content {
+      flex: 1;
+    }
+    .item-title {
+      font-size: 14pt;
+      line-height: 1.5;
+    }
+
+    /* 答案顯現樣式 */
+    .ans-reveal {
+      display: inline-block;
+      min-width: 24px;
+      color: transparent;
+      font-weight: bold;
+      transition: color 0.18s;
+    }
+    .show-ans .ans-reveal,
+    .interactive-item.show-one .ans-reveal {
+      color: #dc2626 !important;
+    }
+
+    /* 選擇題選項高亮 */
+    .correct-choice {
+      display: inline-block;
+      padding: 0 4px;
+      transition: all 0.2s;
+    }
+    .show-ans .correct-choice,
+    .interactive-item.show-one .correct-choice {
+      color: #dc2626 !important;
+      font-weight: bold !important;
+      border: 2px solid #dc2626 !important;
+      border-radius: 12px !important;
+      background-color: #fef2f2 !important;
+      padding: 0 5px !important;
+    }
+
+    /* 填空書寫線 */
+    .write-blank {
+      display: inline-block;
+      min-width: 70px;
+      border-bottom: 1.5px solid #334155;
+      text-align: center;
+      padding: 0 4px;
+      margin: 0 2px;
+    }
+
+    /* 雙欄網格 */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      row-gap: 6px;
+    }
+
+    /* 對照表格 */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0 10px 0;
+      font-size: 13pt;
+      text-align: center;
+    }
+    .matrix-table th {
+      background: #e2e8f0;
+      color: #1e293b;
+      padding: 5px 6px;
+      border: 1px solid #cbd5e1;
+      font-weight: bold;
+    }
+    .matrix-table td {
+      padding: 5px 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+    }
+
+    /* SVG 連連看容器 */
+    .matching-container {
+      position: relative;
+      margin: 8px 0;
+      padding: 6px 4px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .matching-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
+    }
+    .match-card {
+      width: 44%;
+      background: #ffffff;
+      border: 2px solid #94a3b8;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13.5pt;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .match-target {
+      width: 44%;
+      background: #ffffff;
+      border: 2px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14pt;
+      font-weight: bold;
+      text-align: center;
+      color: #0284c7;
+    }
+    .matching-svg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .match-line {
+      stroke: #dc2626;
+      stroke-width: 3;
+      stroke-dasharray: 6 4;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .show-ans .match-line,
+    .interactive-item.show-one .match-line {
+      opacity: 1 !important;
+    }
+
+    /* 數線繪圖盒 */
+    .number-line-wrap {
+      margin: 8px 0 10px 0;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    .number-line-svg {
+      width: 100%;
+      max-height: 110px;
+    }
+
+    /* 成就認證框 */
+    .achievement-card {
+      background: #eff6ff;
+      border: 2px solid #0284c7;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stamp-box {
+      border: 2px dashed #dc2626;
+      border-radius: 6px;
+      padding: 6px 14px;
+      color: #dc2626;
+      font-weight: bold;
+      font-size: 14pt;
+      transform: rotate(-3deg);
+      background: #fef2f2;
+    }
+
+    /* 列印控制 (Print Styles: 嚴格 1 頁對應 1 張 A4，杜絕溢頁) */
+    @media print {
+      html, body {
+        width: 100% !important;
+        height: auto !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print,
+      .classroom-toolbar,
+      .toc-menu,
+      .drawing-canvas,
+      .matching-svg-layer,
+      .tts-play-btn,
+      .tts-options {
+        display: none !important;
+      }
+      .speaking {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      .pages-container {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .page {
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        height: 275mm !important;
+        max-height: 275mm !important;
+        min-height: 0 !important;
+        padding: 8mm 12mm 10mm 12mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+      }
+      .page:last-child,
+      .page:last-of-type {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+      .page-footer {
+        position: static !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-top: auto !important;
+        padding-top: 4px !important;
+        padding-bottom: 1mm !important;
+      }
+      .interactive-item:hover {
+        background: transparent !important;
+        outline: none !important;
+      }
+      .ans-reveal {
+        color: transparent !important;
+      }
+      .correct-choice {
+        color: inherit !important;
+        font-weight: normal !important;
+        border: none !important;
+        background: transparent !important;
+        padding: 0 4px !important;
+      }
+      .write-blank {
+        border-bottom: 1.5px solid #000 !important;
+      }
+      .match-card {
+        border-color: #64748b !important;
+      }
+      .match-target {
+        border-color: #64748b !important;
+        color: #0f172a !important;
+      }
+      .stamp-box {
+        background: transparent !important;
+        border-color: #94a3b8 !important;
+        color: #94a3b8 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 課堂懸浮工具列 (純 Emoji 極簡膠囊) -->
+  <div class="classroom-toolbar no-print">
+    <!-- 目錄跳轉按鈕 -->
+    <div style="position: relative;">
+      <button class="tool-btn" id="tocBtn" onclick="toggleTocMenu(event)" title="章節目錄導覽">
+        📑
+      </button>
+      <div class="toc-menu" id="tocMenu">
+        <div class="toc-menu-title">📖 單元章節目錄</div>
+        <div class="toc-menu-item" onclick="jumpTo('page-1')"><span>第 1 關：正負數概念圖與心智圖</span><span class="toc-page-badge">P.1</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-2')"><span>第 2 關：生活相反量百寶箱</span><span class="toc-page-badge">P.2</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-3')"><span>第 3 關：動手連連看與觀念二選一</span><span class="toc-page-badge">P.3</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-4')"><span>第 4 關：數線三要素與座標找點</span><span class="toc-page-badge">P.4</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-5')"><span>第 5 關：生活基準量應用與闖關認證</span><span class="toc-page-badge">P.5</span></div>
+      </div>
+    </div>
+
+    <!-- 語音朗讀工具開關 -->
+    <button class="tool-btn" id="ttsToggleBtn" onclick="toggleTtsOptions()" title="語音報讀工具">
+      🔊
+    </button>
+
+    <!-- 語音設定小面板 -->
+    <div class="tts-options" id="ttsOptions">
+      <button class="tts-speed-btn" onclick="setTtsSpeed(0.8, this)" title="慢速朗讀">0.8x</button>
+      <button class="tts-speed-btn active" onclick="setTtsSpeed(0.9, this)" title="特教推薦語速">0.9x</button>
+      <button class="tts-speed-btn" onclick="setTtsSpeed(1.0, this)" title="正常語速">1.0x</button>
+      <div class="sub-divider"></div>
+      <button class="tool-btn" style="width:26px; height:26px; font-size:13px;" onclick="stopTts()" title="停止朗讀">
+        ⏹️
+      </button>
+    </div>
+
+    <!-- 一鍵全開答案按鈕 -->
+    <button class="tool-btn btn-toggle-ans" id="toggleAllAnsBtn" onclick="toggleAllAnswers()" title="一鍵全開/全隱答案">
+      <span id="ansIcon">👁️</span>
+    </button>
+    
+    <!-- 畫筆切換按鈕 -->
+    <button class="tool-btn" id="penBtn" onclick="togglePenMode()" title="螢光筆/板書筆">
+      ✏️
+    </button>
+    
+    <!-- 畫筆顏色與粗細選單 -->
+    <div class="pen-options" id="penOptions">
+      <div class="color-picker">
+        <span class="color-dot active" style="background:#facc15;" onclick="setPenColor('rgba(250, 204, 21, 0.45)', this)" title="螢光黃"></span>
+        <span class="color-dot" style="background:#ef4444;" onclick="setPenColor('rgba(239, 68, 68, 0.85)', this)" title="紅筆"></span>
+        <span class="color-dot" style="background:#3b82f6;" onclick="setPenColor('rgba(37, 99, 235, 0.85)', this)" title="藍筆"></span>
+        <span class="color-dot" style="background:#10b981;" onclick="setPenColor('rgba(16, 185, 129, 0.85)', this)" title="綠筆"></span>
+      </div>
+      <div class="sub-divider"></div>
+      <div class="size-picker">
+        <button class="size-btn active" onclick="setPenSize(3, this)">細</button>
+        <button class="size-btn" onclick="setPenSize(8, this)">中</button>
+        <button class="size-btn" onclick="setPenSize(16, this)">粗</button>
+      </div>
+    </div>
+
+    <!-- 清除畫跡 -->
+    <button class="tool-btn" onclick="clearAllDrawings()" title="清除本頁/全卷畫筆">
+      🧹
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- 列印為學生白紙考卷 -->
+    <button class="tool-btn" onclick="window.print()" title="列印為學生白紙考卷">
+      🖨️
+    </button>
+  </div>
+
+  <!-- 五頁闖關容器 -->
+  <div class="pages-container">
+
+    <!-- ==================== 第 1 頁：視覺錨點與相反量概念圖 ==================== -->
+    <div class="page" id="page-1">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正數與負數</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 概念探索：什麼是正數與負數？相反量地圖</span>
+        <span class="quest-badge">第 1 關</span>
+      </div>
+
+      <!-- 觀念錨點 1 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>💡 觀念核心：正數、負數與基準點</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀本段觀念">📢</button>
+        </div>
+        <div style="font-size: 13.5pt; line-height: 1.5;">
+          1. <b>正數</b>：比 <b>0</b> 大的數，用「<b>＋</b>」表示。平時可將＋號省略不寫（例如：＋50 可記為 50）。<br>
+          2. <b>負數</b>：比 <b>0</b> 小的數，用「<b>－</b>」表示，負號<b>絕對不能省略</b>（例如：欠 20 元記為 －20）。<br>
+          3. <b>重要關鍵</b>：<b>0 不是正數，也不是負數！</b> 0 是劃分正負的「<b>基準點</b>」。
+        </div>
+      </div>
+
+      <!-- 生活相反量概念對照卡 -->
+      <div class="concept-box" style="background:#f0fdf4; border-color:#bbf7d0;">
+        <div class="concept-title" style="color:#15803d;">
+          <span>🧭 生活中常見的「相對與相反量」心智圖</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀心智圖">📢</button>
+        </div>
+        <div class="concept-grid">
+          <div class="concept-item">賺錢 <b>(＋)</b> ↔ 賠錢 <b>(－)</b></div>
+          <div class="concept-item">收入 <b>(＋)</b> ↔ 支出 <b>(－)</b></div>
+          <div class="concept-item">向東 <b>(＋)</b> ↔ 向西 <b>(－)</b></div>
+          <div class="concept-item">上升 <b>(＋)</b> ↔ 下降 <b>(－)</b></div>
+          <div class="concept-item">零度以上 <b>(＋)</b> ↔ 零度以下 <b>(－)</b></div>
+          <div class="concept-item">比賽贏 <b>(＋)</b> ↔ 比賽輸 <b>(－)</b></div>
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 6px 0 4px 0;">✍️ 基礎檢核小試身手：</div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">1. 你身上本來沒錢，今天媽媽給你 80 元，我們記作 ＋80 或 <span class="write-blank"><span class="ans-reveal">80</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">2. 肚子好餓跟同學借了 100 元買早餐，代表欠人家 100 元，我們記作 <span class="write-blank"><span class="ans-reveal">－100</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">3. 請問數字「0」是正數還是負數？答：<span class="write-blank"><span class="ans-reveal">都不是</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">4. 負數前面的「－」號，平時可以省略不寫嗎？答：<span class="write-blank"><span class="ans-reveal">不可</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">5. 爬山向上攀岩 5 公尺記為 ＋5，那麼向下退後 3 公尺可記為 <span class="write-blank"><span class="ans-reveal">－3</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">6. 水庫水位比平時升高 6 公分記為 ＋6，那麼水位下降 4 公分記為 <span class="write-blank"><span class="ans-reveal">－4</span></span>。</div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 1 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 2 頁：生活相反量百寶箱 ==================== -->
+    <div class="page" id="page-2">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正數與負數</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 生活情境：生活相反量百寶箱與符號表示</span>
+        <span class="quest-badge">第 2 關</span>
+      </div>
+
+      <!-- 相反量快查表 -->
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>生活情境</th>
+            <th>以「＋」表示（正數）</th>
+            <th>以「－」表示（負數）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>金錢交易</td>
+            <td>賺錢、收入、存款</td>
+            <td>賠錢、支出、欠款</td>
+          </tr>
+          <tr>
+            <td>地理位置</td>
+            <td>向東走、向北走、向右移動</td>
+            <td>向西走、向南走、向左移動</td>
+          </tr>
+          <tr>
+            <td>氣溫與高度</td>
+            <td>氣溫上升、海平面以上、升高</td>
+            <td>氣溫下降、海平面以下、降低</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 情境實戰填空（請填入純數字與正負號）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">1. 阿倫做生意若賺 4500 元記為 4500，那麼賠 7000 元應記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－7000</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">2. 氣溫上升 10℃ 記為 ＋10，若氣溫下降 25℃ 則記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－25</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">3. 零用錢收入 80 元記為 ＋80，那麼買文具支出 45 元記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－45</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">4. 電梯上升 5 公尺記為 ＋5，那麼電梯下降 3 公尺記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－3</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">5. 從學校向東走 2 公里記為 ＋2，那麼向西走 2.5 公里記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－2.5</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">6. 水庫水位上升 8 公分記為 ＋8，若水位下降 5 公分記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－5</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">7. 籃球比賽輸 8 分記為 －8，那麼贏 10 分可記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">＋10</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">8. 體重增加 3 公斤記為 ＋3，那麼運動後減輕 2 公斤記為：<br>
+              答：<span class="write-blank"><span class="ans-reveal">－2</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 2 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 3 頁：動手連連看與觀念二選一 ==================== -->
+    <div class="page" id="page-3">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正數與負數</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 動手練習：送相反量回家（連連看）與觀念二選一</span>
+        <span class="quest-badge">第 3 關</span>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0; display:flex; align-items:center; justify-content:space-between;">
+        <span>🧩 第一部分：請將左側的生活情境，連到右側對應的正負數：</span>
+        <button class="tts-play-btn no-print" onclick="speakMatching(event)" title="語音朗讀連連看內容">📢</button>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="item-content">
+          <div class="matching-container" id="matchArea">
+            <!-- SVG 連線層 -->
+            <svg class="matching-svg-layer" id="matchSvg">
+              <line class="match-line" id="line1" x1="44%" y1="13%" x2="56%" y2="38%"></line>
+              <line class="match-line" id="line2" x1="44%" y1="38%" x2="56%" y2="13%"></line>
+              <line class="match-line" id="line3" x1="44%" y1="63%" x2="56%" y2="88%"></line>
+              <line class="match-line" id="line4" x1="44%" y1="88%" x2="56%" y2="63%"></line>
+            </svg>
+
+            <div class="matching-row">
+              <div class="match-card">A. 賠 500 元</div>
+              <div class="match-target">－3</div>
+            </div>
+            <div class="matching-row">
+              <div class="match-card">B. 零度以下 3 度</div>
+              <div class="match-target">－500</div>
+            </div>
+            <div class="matching-row">
+              <div class="match-card">C. 向西走 6 公里</div>
+              <div class="match-target">－4</div>
+            </div>
+            <div class="matching-row">
+              <div class="match-card">D. 體重減輕 4 公斤</div>
+              <div class="match-target">－6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 8px 0 4px 0;">🎯 第二部分：觀念二選一／三選一圈圈看：</div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">1. 在數學數線上，我們通常以哪一個數字作為正負數的分界點（基準點）？</div>
+          <div style="margin-left: 10px;">
+            (A) 1　　<span class="correct-choice">(B) 0</span>　　(C) 10
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">2. 下列哪一個數是「負數」？</div>
+          <div style="margin-left: 10px;">
+            (A) 7　　(B) 0　　<span class="correct-choice">(C) －9</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">3. 下列哪一個數的數值「最大」？</div>
+          <div style="margin-left: 10px;">
+            <span class="correct-choice">(A) ＋8</span>　　(B) 0　　(C) －15
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+        <div class="item-content">
+          <div class="item-title">4. 向東走 50 公尺記為 ＋50，那麼「原地不動」應該記為什麼？</div>
+          <div style="margin-left: 10px;">
+            (A) ＋50　　<span class="correct-choice">(B) 0</span>　　(C) －50
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 3 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 4 頁：數線三要素與座標找點 ==================== -->
+    <div class="page" id="page-4">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正數與負數</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 幾何探測：數線三要素與數線找座標</span>
+        <span class="quest-badge">第 4 關</span>
+      </div>
+
+      <!-- 數線三要素圖解卡 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>📏 數線三要素：原點、方向、單位長</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀三要素">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. <b>原點</b>：標示數字 <b>0</b> 的基準起點。<br>
+          2. <b>方向</b>：箭頭一律向<b>右</b>（正向），表示越往右邊數值越<b>大</b>，越往左邊越<b>小</b>。<br>
+          3. <b>單位長</b>：數線上每一個刻度的長度必須<b>完全相等</b>。
+        </div>
+      </div>
+
+      <!-- 數線圖示與讀取座標題 -->
+      <div class="number-line-wrap">
+        <div style="font-weight: bold; margin-bottom: 4px; color: #0f4c81; display:flex; align-items:center; justify-content:center;">
+          <span>📍 觀察下方數線，求出 A、B、C、D、E 各點所代表的數：</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.number-line-wrap'), event)" title="語音朗讀數線題目">📢</button>
+        </div>
+        
+        <svg class="number-line-svg" viewBox="0 0 650 95">
+          <!-- 數線主軸 -->
+          <line x1="20" y1="50" x2="630" y2="50" stroke="#0f172a" stroke-width="2.5" />
+          <!-- 向右箭頭 -->
+          <polygon points="630,45 645,50 630,55" fill="#0f172a" />
+          
+          <!-- -4 (100) A -->
+          <line x1="100" y1="40" x2="100" y2="60" stroke="#0f172a" stroke-width="2" />
+          <circle cx="100" cy="50" r="4.5" fill="#ef4444" />
+          <text x="100" y="32" font-size="14" font-weight="bold" fill="#ef4444" text-anchor="middle">A</text>
+          <text x="100" y="74" font-size="13" font-family="Times New Roman" fill="#334155" text-anchor="middle">-4</text>
+          
+          <!-- -1.5 (238) B -->
+          <circle cx="238" cy="50" r="4.5" fill="#ef4444" />
+          <text x="238" y="32" font-size="14" font-weight="bold" fill="#ef4444" text-anchor="middle">B</text>
+
+          <!-- -1 (265) -->
+          <line x1="265" y1="42" x2="265" y2="58" stroke="#64748b" stroke-width="1.5" />
+
+          <!-- 0 (320) 原點 C -->
+          <line x1="320" y1="38" x2="320" y2="62" stroke="#0284c7" stroke-width="2.5" />
+          <circle cx="320" cy="50" r="5" fill="#0284c7" />
+          <text x="320" y="30" font-size="14" font-weight="bold" fill="#0284c7" text-anchor="middle">C(原點)</text>
+          <text x="320" y="76" font-size="15" font-weight="bold" font-family="Times New Roman" fill="#0284c7" text-anchor="middle">0</text>
+
+          <!-- 2 (430) D -->
+          <line x1="430" y1="40" x2="430" y2="60" stroke="#0f172a" stroke-width="2" />
+          <circle cx="430" cy="50" r="4.5" fill="#ef4444" />
+          <text x="430" y="32" font-size="14" font-weight="bold" fill="#ef4444" text-anchor="middle">D</text>
+          <text x="430" y="74" font-size="13" font-family="Times New Roman" fill="#334155" text-anchor="middle">2</text>
+
+          <!-- 5 (595) E -->
+          <line x1="595" y1="40" x2="595" y2="60" stroke="#0f172a" stroke-width="2" />
+          <circle cx="595" cy="50" r="4.5" fill="#ef4444" />
+          <text x="595" y="32" font-size="14" font-weight="bold" fill="#ef4444" text-anchor="middle">E</text>
+          <text x="595" y="74" font-size="13" font-family="Times New Roman" fill="#334155" text-anchor="middle">5</text>
+        </svg>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 請寫出數線上各點所代表的數值（純填答）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">A 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－4</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">B 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－1.5</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">C 點（原點）＝ <span class="write-blank"><span class="ans-reveal">0</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">D 點座標 ＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 8px 0 4px 0;">⚖️ 數線大小比一比（越右邊越大，在空格內填入 ＞ 或 ＜）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">1. 2 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －4</div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">2. 0 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －1.5</div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">3. －4 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＜</span></span> －1.5</div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">4. 5 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> 2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 4 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 5 頁：生活基準量應用與闖關認證 ==================== -->
+    <div class="page" id="page-5">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正數與負數</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 素養闖關：基準量綜合題組與闖關榮譽榜</span>
+        <span class="quest-badge">第 5 關</span>
+      </div>
+
+      <!-- 題組一：體重基準問題 -->
+      <div class="concept-box" style="margin-bottom: 6px;">
+        <div class="concept-title">
+          <span>⚖️ 題組一：體重基準（以 45 公斤為基準點 0）</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀說明">📢</button>
+        </div>
+        <div style="font-size: 13pt;">
+          若以標準體重 <b>45 公斤</b>為基準，甲體重 48 公斤記為 <b>＋3</b>。
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">1. 乙體重 50 公斤，可記為：<span class="write-blank"><span class="ans-reveal">＋5</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">2. 丙體重 37 公斤，可記為：<span class="write-blank"><span class="ans-reveal">－8</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">3. 丁體重正好 45 公斤，記為：<span class="write-blank"><span class="ans-reveal">0</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">4. 戊體重記為 ＋7，實際是：<span class="write-blank"><span class="ans-reveal">52</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 題組二：段考成績基準比對 -->
+      <div class="concept-box" style="margin-top: 8px; margin-bottom: 6px;">
+        <div class="concept-title">
+          <span>📊 題組二：段考相差分數（以國文 91 分為基準 0）</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀說明">📢</button>
+        </div>
+        <div style="font-size: 13pt;">
+          阿晶第一次段考，以國文 91 分為基準，其他科目相差分數如下：
+        </div>
+      </div>
+
+      <table class="matrix-table" style="margin-bottom: 8px;">
+        <thead>
+          <tr>
+            <th>科目</th>
+            <th>國文</th>
+            <th>英語</th>
+            <th>數學</th>
+            <th>公民</th>
+            <th>生物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>相差分數</td>
+            <td>0</td>
+            <td>＋7</td>
+            <td>－4</td>
+            <td>＋8</td>
+            <td>－2</td>
+          </tr>
+          <tr>
+            <td>實際得分</td>
+            <td>91</td>
+            <td><span class="ans-reveal">98</span></td>
+            <td><span class="ans-reveal">87</span></td>
+            <td><span class="ans-reveal">99</span></td>
+            <td><span class="ans-reveal">89</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">1. 英語實際得分：<span class="write-blank"><span class="ans-reveal">98</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">2. 數學實際得分：<span class="write-blank"><span class="ans-reveal">87</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">3. 得分最高的科目是：<span class="write-blank"><span class="ans-reveal">公民</span></span></div>
+          </div>
+        </div>
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+          <div class="item-content">
+            <div class="item-title">4. 最高與最低分相差：<span class="write-blank"><span class="ans-reveal">12</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 闖關認證卡 -->
+      <div class="achievement-card">
+        <div>
+          <div style="font-size: 14pt; font-weight: bold; color: #0369a1;">🏆 恭喜完成第一單元特訓！</div>
+          <div style="font-size: 12pt; color: #475569; margin-top: 2px;">
+            學習挑戰星等：⭐⭐⭐⭐⭐（請自評塗滿）
+          </div>
+        </div>
+        <div class="stamp-box">
+          特教教學‧認證合格
+        </div>
+      </div>
+
+      <div class="page-footer">第 5 頁，共 5 頁</div>
+    </div>
+
+  </div>
+
+  <!-- 互動控制 JavaScript -->
+  <script>
+    let isAllAnsShown = false;
+    let isPenMode = false;
+    let currentColor = 'rgba(250, 204, 21, 0.45)'; // 螢光黃
+    let currentSize = 3;
+    const canvases = [];
+
+    // 語音朗讀狀態
+    let currentTtsSpeed = 0.9;
+    let currentSpeakingEl = null;
+
+    // 0. 目錄切換與跳轉
+    function toggleTocMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('tocMenu');
+      if (menu) menu.classList.toggle('show');
+    }
+
+    function jumpTo(targetId) {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const menu = document.getElementById('tocMenu');
+      if (menu) menu.classList.remove('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('tocMenu');
+      const btn = document.getElementById('tocBtn');
+      if (menu && menu.classList.contains('show')) {
+        if (!menu.contains(e.target) && e.target !== btn) {
+          menu.classList.remove('show');
+        }
+      }
+    });
+
+    // 1. 語音朗讀面板控制與特教數學自然發音
+    function toggleTtsOptions() {
+      const opts = document.getElementById('ttsOptions');
+      const btn = document.getElementById('ttsToggleBtn');
+      if (!opts) return;
+      if (opts.style.display === 'inline-flex') {
+        opts.style.display = 'none';
+        btn.classList.remove('active');
+      } else {
+        opts.style.display = 'inline-flex';
+        btn.classList.add('active');
+      }
+    }
+
+    function setTtsSpeed(speed, btnEl) {
+      currentTtsSpeed = speed;
+      document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        stopTts();
+      }
+    }
+
+    function stopTts() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentSpeakingEl) {
+        currentSpeakingEl.classList.remove('speaking');
+        const pBtn = currentSpeakingEl.querySelector('.tts-play-btn');
+        if (pBtn) pBtn.classList.remove('playing');
+        currentSpeakingEl = null;
+      }
+    }
+
+    // 數學專用文字轉語音優化（避免「＋」唸成加、「－」唸成減）
+    function formatMathSpeech(rawText) {
+      if (!rawText) return '';
+      let s = rawText;
+      s = s.replace(/七年____班.*姓名：___________/g, '');
+      // 正負數符號智慧轉換
+      s = s.replace(/＋(\d+(\.\d+)?)/g, '正 $1 ');
+      s = s.replace(/\+(\d+(\.\d+)?)/g, '正 $1 ');
+      s = s.replace(/－(\d+(\.\d+)?)/g, '負 $1 ');
+      s = s.replace(/-(\d+(\.\d+)?)/g, '負 $1 ');
+      // 常用符號與單位優化
+      s = s.replace(/℃/g, '度');
+      s = s.replace(/＞/g, '大於');
+      s = s.replace(/＜/g, '小於');
+      s = s.replace(/＝/g, '等於');
+      s = s.replace(/\(A\)/g, '選項 A ');
+      s = s.replace(/\(B\)/g, '選項 B ');
+      s = s.replace(/\(C\)/g, '選項 C ');
+      s = s.replace(/\(D\)/g, '選項 D ');
+      s = s.replace(/【|】/g, ' ');
+      s = s.replace(/____/g, '空格');
+      s = s.replace(/A\(-4\)/g, 'A點負四');
+      s = s.replace(/B\(-1\.5\)/g, 'B點負一點五');
+      s = s.replace(/C\(0\)/g, 'C點零');
+      s = s.replace(/D\(2\)/g, 'D點二');
+      s = s.replace(/E\(5\)/g, 'E點五');
+      return s;
+    }
+
+    function speakElement(el, e) {
+      if (e) e.stopPropagation();
+      if (!('speechSynthesis' in window)) {
+        alert('您的瀏覽器不支援語音合成（Web Speech API）。建議使用 Chrome 或 Edge 瀏覽器！');
+        return;
+      }
+
+      // 如果已在朗讀當前元素，點擊則停止
+      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
+        stopTts();
+        return;
+      }
+
+      stopTts();
+
+      // 提取文字（略除按鈕文字）
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('.tts-play-btn, .drawing-canvas, script').forEach(n => n.remove());
+
+      // 【核心規範：答案絕對不能唸出來！】
+      // 將所有答案填空區替換為「空格」，嚴防學生未作答先聽出答案
+      clone.querySelectorAll('.ans-reveal').forEach(n => {
+        n.textContent = '空格';
+      });
+
+      const text = formatMathSpeech(clone.innerText || clone.textContent);
+
+      if (!text.trim()) return;
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-TW';
+      utter.rate = currentTtsSpeed;
+
+      // 尋找繁體中文語音
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+      if (zhVoice) utter.voice = zhVoice;
+
+      currentSpeakingEl = el;
+      el.classList.add('speaking');
+      const pBtn = el.querySelector('.tts-play-btn');
+      if (pBtn) pBtn.classList.add('playing');
+
+      utter.onend = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      utter.onerror = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 連連看專用朗讀（僅讀題目與選項，絕對不洩漏連線解答）
+    function speakMatching(e) {
+      if (e) e.stopPropagation();
+      if (!('speechSynthesis' in window)) return;
+      
+      const el = document.getElementById('matchArea');
+      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
+        stopTts();
+        return;
+      }
+
+      stopTts();
+
+      const text = "第一部分：請將左側的生活情境，連到右側對應的正負數。左側題目：A. 賠 500 元，B. 零度以下 3 度，C. 向西走 6 公里，D. 體重減輕 4 公斤。右側選項：負 3、負 500、負 4、負 6。請在紙上動手連連看。";
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-TW';
+      utter.rate = currentTtsSpeed;
+
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+      if (zhVoice) utter.voice = zhVoice;
+
+      currentSpeakingEl = el;
+      el.classList.add('speaking');
+      const pBtn = document.querySelector('#page-3 .tts-play-btn');
+      if (pBtn) pBtn.classList.add('playing');
+
+      utter.onend = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+      utter.onerror = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 確保語音列表非同步載入
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
+    // 2. 逐題點擊顯現解答
+    function toggleItemAnswer(el) {
+      if (isPenMode) return; // 畫筆模式時不觸發答案
+      el.classList.toggle('show-one');
+    }
+
+    // 3. 一鍵全開 / 全隱答案
+    function toggleAllAnswers() {
+      isAllAnsShown = !isAllAnsShown;
+      const btn = document.getElementById('toggleAllAnsBtn');
+      const icon = document.getElementById('ansIcon');
+      const container = document.querySelector('.pages-container');
+      
+      if (isAllAnsShown) {
+        container.classList.add('show-ans');
+        btn.classList.add('active');
+        icon.textContent = '🙈';
+      } else {
+        container.classList.remove('show-ans');
+        btn.classList.remove('active');
+        icon.textContent = '👁️';
+        document.querySelectorAll('.show-one').forEach(el => el.classList.remove('show-one'));
+      }
+    }
+
+    // 4. 畫筆切換
+    function togglePenMode() {
+      isPenMode = !isPenMode;
+      const penBtn = document.getElementById('penBtn');
+      const options = document.getElementById('penOptions');
+      
+      if (isPenMode) {
+        penBtn.classList.add('active');
+        options.style.display = 'inline-flex';
+        document.body.classList.add('pen-mode');
+        stopTts();
+      } else {
+        penBtn.classList.remove('active');
+        options.style.display = 'none';
+        document.body.classList.remove('pen-mode');
+      }
+    }
+
+    // 5. 設定顏色與粗細
+    function setPenColor(color, el) {
+      currentColor = color;
+      document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function setPenSize(size, btnEl) {
+      currentSize = size;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    // 6. 初始化每頁畫布
+    function initCanvases() {
+      const pageElements = document.querySelectorAll('.page');
+      pageElements.forEach(page => {
+        const canvas = page.querySelector('.drawing-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        function resize() {
+          const rect = page.getBoundingClientRect();
+          const scale = window.devicePixelRatio || 1;
+          canvas.width = rect.width * scale;
+          canvas.height = rect.height * scale;
+          ctx.scale(scale, scale);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function getPos(e) {
+          const rect = canvas.getBoundingClientRect();
+          if (e.touches && e.touches.length > 0) {
+            return {
+              x: e.touches[0].clientX - rect.left,
+              y: e.touches[0].clientY - rect.top
+            };
+          }
+          return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        }
+
+        function startDraw(e) {
+          if (!isPenMode) return;
+          isDrawing = true;
+          const pos = getPos(e);
+          lastX = pos.x;
+          lastY = pos.y;
+        }
+
+        function draw(e) {
+          if (!isDrawing || !isPenMode) return;
+          const pos = getPos(e);
+          ctx.beginPath();
+          ctx.moveTo(lastX, lastY);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.strokeStyle = currentColor;
+          ctx.lineWidth = currentSize;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.stroke();
+          lastX = pos.x;
+          lastY = pos.y;
+          e.preventDefault();
+        }
+
+        function stopDraw() {
+          isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDraw);
+
+        canvas.addEventListener('touchstart', startDraw, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        window.addEventListener('touchend', stopDraw);
+
+        canvases.push({ canvas, ctx });
+      });
+    }
+
+    // 7. 清除所有畫跡
+    function clearAllDrawings() {
+      canvases.forEach(({ canvas, ctx }) => {
+        const scale = window.devicePixelRatio || 1;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initCanvases();
+    });
+  </script>
+</body>
+</html>
