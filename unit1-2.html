@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>國中數學（七上）1-2 整數加減混合運算與數線距離 隨堂練習單（適性鷹架版・獨立換頁）</title>
+  <title>國中數學（七上）1-2 正負數的加減運算與數線距離（適性鷹架版・獨立換頁）</title>
   <style>
     @page {
       size: A4 portrait;
@@ -92,7 +92,7 @@
       border-radius: 14px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
       padding: 6px 0;
-      min-width: 250px;
+      min-width: 260px;
       z-index: 10000;
     }
     .toc-menu.show {
@@ -314,7 +314,7 @@
       background-color: #f8fafc;
       border-left: 4px solid #0284c7;
       padding: 5px 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .type-title {
       font-size: 14pt;
@@ -330,7 +330,7 @@
 
     /* 題目單元 */
     .question-item {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       padding: 4px 6px;
       border-radius: 6px;
       transition: background 0.12s;
@@ -381,23 +381,23 @@
     .step-area {
       font-family: "Times New Roman", "標楷體", serif;
       font-size: 13pt;
-      line-height: 1.5;
+      line-height: 1.55;
       padding-left: 28px;
       color: #1e293b;
     }
     .step-line {
       display: block;
-      margin: 1.5px 0;
+      margin: 2px 0;
     }
 
     /* 第5題手寫留白空間 */
     .write-space {
-      min-height: 22mm;
+      min-height: 24mm;
       border: 1px dashed #cbd5e1;
       border-radius: 6px;
-      margin-top: 3px;
+      margin-top: 4px;
       background: #fafbfc;
-      padding: 5px 10px;
+      padding: 6px 10px;
     }
     body:not(.pen-mode) .question-item:hover .write-space {
       border-color: #0284c7;
@@ -414,7 +414,7 @@
       font-weight: bold;
     }
 
-    /* 去括號底線填空樣式 (負號與數字同一格，寬度充足好書寫) */
+    /* 底線填空樣式 (負號與數字同一格，寬度充足好書寫) */
     .step-blank {
       display: inline-block;
       border-bottom: 2px solid #0f172a;
@@ -543,27 +543,27 @@
         📑
       </button>
       <div class="toc-menu" id="tocMenu">
-        <div class="toc-title">📖 適性鷹架版・單元跳轉 (每題型獨立頁)</div>
+        <div class="toc-title">📖 1-2 講義適性鷹架版・關卡跳轉</div>
         <div class="toc-menu-item" onclick="jumpTo('page-1', 'start')">
-          <span>題型一：正＋負－正（正數）</span><span class="toc-badge">第 1 頁</span>
+          <span>關卡一：小數減大數（負數誕生）</span><span class="toc-badge">第 1 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-2', 'start')">
-          <span>題型二：正＋負－正（負數）</span><span class="toc-badge">第 2 頁</span>
+          <span>關卡二：正數 ＋ 負數（＋－得－）</span><span class="toc-badge">第 2 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-3', 'start')">
-          <span>題型三：負＋負－正（連負）</span><span class="toc-badge">第 3 頁</span>
+          <span>關卡三：正數 － 負數（－－得＋）</span><span class="toc-badge">第 3 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-4', 'start')">
-          <span>題型四：正＋負－負（雙重變號）</span><span class="toc-badge">第 4 頁</span>
+          <span>關卡四：負負相加（同號數相加）</span><span class="toc-badge">第 4 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-5', 'start')">
-          <span>題型五：全負括號混合運算</span><span class="toc-badge">第 5 頁</span>
+          <span>關卡五：負數 － 負數（負數加正數）</span><span class="toc-badge">第 5 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-6', 'start')">
-          <span>題型六：負－正＋正運算</span><span class="toc-badge">第 6 頁</span>
+          <span>關卡六：數線上兩點間的距離</span><span class="toc-badge">第 6 頁</span>
         </div>
         <div class="toc-menu-item" onclick="jumpTo('page-7', 'start')">
-          <span>題型七：數線上兩點間距離</span><span class="toc-badge">第 7 頁</span>
+          <span>關卡七：已知距離求未知座標</span><span class="toc-badge">第 7 頁</span>
         </div>
         <div class="toolbar-divider" style="width:100%; margin:4px 0;"></div>
         <a href="index.html" class="toc-menu-item" style="color:#0284c7; font-weight:bold;">
@@ -641,14 +641,14 @@
   <div class="pages-container">
 
     <!-- ============================================================
-         【第 1 頁】題型一（獨立換頁）
+         【第 1 頁】關卡一：小數減大數（動動腦 1：負數的誕生）
          ============================================================ -->
     <div class="sheet-page" id="page-1">
       <canvas class="drawing-canvas"></canvas>
 
       <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡一（小數減大數）</div>
         <div class="student-info">
           <span>班級：_______</span>
           <span>座號：_______</span>
@@ -659,88 +659,88 @@
 
       <div class="type-section">
         <div class="type-header">
-          <div class="type-title">題型一：正數 ＋ 負數 － 正數（結果為正整數）</div>
-          <div class="type-rule">解題原則：先化簡符號「＋(－) 得 －」，再由左至右依序相減。</div>
+          <div class="type-title">關卡一：小數減大數（不夠減，結果為負數）</div>
+          <div class="type-rule">解題原則：大數減小數為正數，小數減大數為負數，先用大減小再加負號。</div>
         </div>
 
+        <!-- 第 1 題：示範引導（極高鷹架） -->
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) 25 ＋ (－5) － 12
+            (1) 7 － 10
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 25 － <span class="step-blank guide">5</span> － 12</span>
-            <span class="step-line">＝ <span class="step-blank guide">20</span> － 12</span>
-            <span class="step-line">＝ <span class="step-blank">8</span></span>
+            <span class="step-line">＝ －(10 － <span class="step-blank guide">7</span>)</span>
+            <span class="step-line">＝ <span class="step-blank guide">－3</span></span>
           </div>
         </div>
 
+        <!-- 第 2 題：中度挖空（中鷹架） -->
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) 34 ＋ (－8) － 16
+            (2) 4 － 11
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 34 － <span class="step-blank">8</span> － 16</span>
-            <span class="step-line">＝ <span class="step-blank">26</span> － 16</span>
-            <span class="step-line">＝ <span class="step-blank">10</span></span>
+            <span class="step-line">＝ －(11 － <span class="step-blank">4</span>)</span>
+            <span class="step-line">＝ <span class="step-blank">－7</span></span>
           </div>
         </div>
 
+        <!-- 第 3 題：高度挖空（低鷹架） -->
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) 28 ＋ (－6) － 15
+            (3) 12 － 23
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 28 <span class="step-blank">－6</span> － 15</span>
-            <span class="step-line">＝ <span class="step-blank">22</span> － 15</span>
-            <span class="step-line">＝ <span class="step-blank">7</span></span>
+            <span class="step-line">＝ －(<span class="step-blank">23</span> － <span class="step-blank">12</span>)</span>
+            <span class="step-line">＝ <span class="step-blank">－11</span></span>
           </div>
         </div>
 
+        <!-- 第 4 題：符號與數字挖空（極低鷹架） -->
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) 45 ＋ (－15) － 20
+            (4) 21 － 40
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 45 <span class="step-blank">－15</span> <span class="step-blank">－20</span></span>
-            <span class="step-line">＝ <span class="step-blank">30</span> － 20</span>
-            <span class="step-line">＝ <span class="step-blank">10</span></span>
+            <span class="step-line">＝ <span class="step-blank">－(40 － 21)</span></span>
+            <span class="step-line">＝ <span class="step-blank">－19</span></span>
           </div>
         </div>
 
+        <!-- 第 5 題：自主實戰（完全褪除） -->
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) 32 ＋ (－7) － 19
+            (5) 34 － 62
           </div>
           <div class="step-area">
             <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">32 － 7 － 19</span></span>
-              <span class="step-line">＝ <span class="ans-char">25 － 19</span></span>
-              <span class="step-line">＝ <span class="ans-char">6</span></span>
+              <span class="step-line">＝ <span class="ans-char">－(62 － 34)</span></span>
+              <span class="step-line">＝ <span class="ans-char">－28</span></span>
             </div>
           </div>
         </div>
       </div>
 
       <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 1 頁，共 7 頁）
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 1 頁，共 7 頁）
       </footer>
     </div>
 
 
     <!-- ============================================================
-         【第 2 頁】題型二（獨立換頁）
+         【第 2 頁】關卡二：正數 ＋ 負數（動動腦 4：去括號 ＋－得－）
          ============================================================ -->
     <div class="sheet-page" id="page-2">
       <canvas class="drawing-canvas"></canvas>
 
       <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡二（正數加負數）</div>
         <div class="student-info">
           <span>隨堂練習單（續頁）</span>
         </div>
@@ -748,475 +748,39 @@
 
       <div class="type-section">
         <div class="type-header">
-          <div class="type-title">題型二：正數 ＋ 負數 － 正數（結果為負整數）</div>
-          <div class="type-rule">解題原則：化簡為連減，最後步驟「小數減大數，結果為負數」。</div>
+          <div class="type-title">關卡二：正數 ＋ 負數（去括號法則：「＋－得－」）</div>
+          <div class="type-rule">解題原則：遇到正負相連「＋(－) 化簡為 －」，直接轉化為一般減法。</div>
         </div>
 
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) 16 ＋ (－12) － 9
+            (1) 6 ＋ (－4)
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 16 － <span class="step-blank guide">12</span> － 9</span>
-            <span class="step-line">＝ <span class="step-blank guide">4</span> － 9</span>
-            <span class="step-line">＝ <span class="step-blank guide">－5</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) 24 ＋ (－20) － 7
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 24 － 20 － <span class="step-blank">7</span></span>
-            <span class="step-line">＝ <span class="step-blank">4</span> － 7</span>
-            <span class="step-line">＝ <span class="step-blank">－3</span></span>
+            <span class="step-line">＝ 6 － <span class="step-blank guide">4</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">2</span></span>
           </div>
         </div>
 
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) 15 ＋ (－10) － 8
+            (2) 7 ＋ (－3)
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 15 <span class="step-blank">－10</span> － 8</span>
-            <span class="step-line">＝ 5 － 8</span>
-            <span class="step-line">＝ <span class="step-blank">－3</span></span>
+            <span class="step-line">＝ 7 － <span class="step-blank">3</span></span>
+            <span class="step-line">＝ <span class="step-blank">4</span></span>
           </div>
         </div>
 
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) 22 ＋ (－17) － 11
+            (3) 15 ＋ (－6)
           </div>
           <div class="step-area">
-            <span class="step-line">＝ 22 <span class="step-blank">－17</span> <span class="step-blank">－11</span></span>
-            <span class="step-line">＝ 5 － 11</span>
-            <span class="step-line">＝ <span class="step-blank">－6</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) 30 ＋ (－25) － 13
-          </div>
-          <div class="step-area">
-            <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">30 － 25 － 13</span></span>
-              <span class="step-line">＝ <span class="ans-char">5 － 13</span></span>
-              <span class="step-line">＝ <span class="ans-char">－8</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 2 頁，共 7 頁）
-      </footer>
-    </div>
-
-
-    <!-- ============================================================
-         【第 3 頁】題型三（獨立換頁）
-         ============================================================ -->
-    <div class="sheet-page" id="page-3">
-      <canvas class="drawing-canvas"></canvas>
-
-      <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
-        <div class="student-info">
-          <span>隨堂練習單（續頁）</span>
-        </div>
-      </div>
-
-      <div class="type-section">
-        <div class="type-header">
-          <div class="type-title">題型三：負數 ＋ 負數 － 正數（連續負數累積）</div>
-          <div class="type-rule">解題原則：連續欠錢越欠越多，「同號數相加，結果保持負號」。</div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) (－6) ＋ (－14) － 15
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －6 － <span class="step-blank guide">14</span> － 15</span>
-            <span class="step-line">＝ <span class="step-blank guide">－20</span> － 15</span>
-            <span class="step-line">＝ <span class="step-blank guide">－35</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) (－10) ＋ (－15) － 25
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －10 － 15 － <span class="step-blank">25</span></span>
-            <span class="step-line">＝ <span class="step-blank">－25</span> － 25</span>
-            <span class="step-line">＝ <span class="step-blank">－50</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) (－7) ＋ (－13) － 18
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －7 <span class="step-blank">－13</span> － 18</span>
-            <span class="step-line">＝ <span class="step-blank">－20</span> － 18</span>
-            <span class="step-line">＝ <span class="step-blank">－38</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) (－9) ＋ (－21) － 30
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank">－9</span> <span class="step-blank">－21</span> <span class="step-blank">－30</span></span>
-            <span class="step-line">＝ <span class="step-blank">－30</span> － 30</span>
-            <span class="step-line">＝ <span class="step-blank">－60</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) (－12) ＋ (－18) － 16
-          </div>
-          <div class="step-area">
-            <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">－12 － 18 － 16</span></span>
-              <span class="step-line">＝ <span class="ans-char">－30 － 16</span></span>
-              <span class="step-line">＝ <span class="ans-char">－46</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 3 頁，共 7 頁）
-      </footer>
-    </div>
-
-
-    <!-- ============================================================
-         【第 4 頁】題型四（獨立換頁）
-         ============================================================ -->
-    <div class="sheet-page" id="page-4">
-      <canvas class="drawing-canvas"></canvas>
-
-      <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
-        <div class="student-info">
-          <span>隨堂練習單（續頁）</span>
-        </div>
-      </div>
-
-      <div class="type-section">
-        <div class="type-header">
-          <div class="type-title">題型四：正數 ＋ 負數 － 負數（雙重符號化簡）</div>
-          <div class="type-rule">解題原則：注意「＋(－) 得 －」且「－(－) 得 ＋」。</div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) 25 ＋ (－7) － (－32)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 25 － 7 ＋ <span class="step-blank guide">32</span></span>
-            <span class="step-line">＝ <span class="step-blank guide">18</span> ＋ 32</span>
-            <span class="step-line">＝ <span class="step-blank guide">50</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) 40 ＋ (－12) － (－22)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 40 － <span class="step-blank">12</span> ＋ <span class="step-blank">22</span></span>
-            <span class="step-line">＝ <span class="step-blank">28</span> ＋ 22</span>
-            <span class="step-line">＝ <span class="step-blank">50</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) 18 ＋ (－6) － (－28)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 18 － 6 <span class="step-blank">＋28</span></span>
-            <span class="step-line">＝ <span class="step-blank">12</span> ＋ 28</span>
-            <span class="step-line">＝ <span class="step-blank">40</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) 35 ＋ (－15) － (－30)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 35 <span class="step-blank">－15</span> <span class="step-blank">＋30</span></span>
-            <span class="step-line">＝ <span class="step-blank">20</span> ＋ 30</span>
-            <span class="step-line">＝ <span class="step-blank">50</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) 28 ＋ (－9) － (－41)
-          </div>
-          <div class="step-area">
-            <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">28 － 9 ＋ 41</span></span>
-              <span class="step-line">＝ <span class="ans-char">19 ＋ 41</span></span>
-              <span class="step-line">＝ <span class="ans-char">60</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 4 頁，共 7 頁）
-      </footer>
-    </div>
-
-
-    <!-- ============================================================
-         【第 5 頁】題型五（獨立換頁）
-         ============================================================ -->
-    <div class="sheet-page" id="page-5">
-      <canvas class="drawing-canvas"></canvas>
-
-      <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
-        <div class="student-info">
-          <span>隨堂練習單（續頁）</span>
-        </div>
-      </div>
-
-      <div class="type-section">
-        <div class="type-header">
-          <div class="type-title">題型五：全負數括號之加減混合運算</div>
-          <div class="type-rule">解題原則：先去掉括號化簡為「負數 － 正數 ＋ 正數」再逐步計算。</div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) (－28) ＋ (－6) － (－14)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －28 － 6 ＋ <span class="step-blank guide">14</span></span>
-            <span class="step-line">＝ <span class="step-blank guide">－34</span> ＋ 14</span>
-            <span class="step-line">＝ <span class="step-blank guide">－20</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) (－40) ＋ (－8) － (－18)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －40 － <span class="step-blank">8</span> ＋ <span class="step-blank">18</span></span>
-            <span class="step-line">＝ <span class="step-blank">－48</span> ＋ 18</span>
-            <span class="step-line">＝ <span class="step-blank">－30</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) (－25) ＋ (－5) － (－12)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ －25 <span class="step-blank">－5</span> <span class="step-blank">＋12</span></span>
-            <span class="step-line">＝ <span class="step-blank">－30</span> ＋ 12</span>
-            <span class="step-line">＝ <span class="step-blank">－18</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) (－32) ＋ (－9) － (－21)
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank">－32</span> <span class="step-blank">－9</span> <span class="step-blank">＋21</span></span>
-            <span class="step-line">＝ <span class="step-blank">－41</span> ＋ 21</span>
-            <span class="step-line">＝ <span class="step-blank">－20</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) (－50) ＋ (－10) － (－25)
-          </div>
-          <div class="step-area">
-            <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">－50 － 10 ＋ 25</span></span>
-              <span class="step-line">＝ <span class="ans-char">－60 ＋ 25</span></span>
-              <span class="step-line">＝ <span class="ans-char">－35</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 5 頁，共 7 頁）
-      </footer>
-    </div>
-
-
-    <!-- ============================================================
-         【第 6 頁】題型六（獨立換頁）
-         ============================================================ -->
-    <div class="sheet-page" id="page-6">
-      <canvas class="drawing-canvas"></canvas>
-
-      <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
-        <div class="student-info">
-          <span>隨堂練習單（續頁）</span>
-        </div>
-      </div>
-
-      <div class="type-section">
-        <div class="type-header">
-          <div class="type-title">題型六：負數 － 正數 ＋ 正數運算</div>
-          <div class="type-rule">解題原則：前兩數為連減「先求負數累計」，再與第三個正數相加。</div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) (－16) － 18 ＋ 40
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank guide">－34</span> ＋ 40</span>
-            <span class="step-line">＝ 40 － 34</span>
-            <span class="step-line">＝ <span class="step-blank guide">6</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) (－22) － 15 ＋ 45
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank">－37</span> ＋ 45</span>
-            <span class="step-line">＝ 45 － 37</span>
-            <span class="step-line">＝ <span class="step-blank">8</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) (－15) － 25 ＋ 50
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank">－40</span> ＋ 50</span>
-            <span class="step-line">＝ 50 － 40</span>
-            <span class="step-line">＝ <span class="step-blank">10</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) (－18) － 17 ＋ 42
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ <span class="step-blank">－35</span> ＋ 42</span>
-            <span class="step-line">＝ 42 － <span class="step-blank">35</span></span>
-            <span class="step-line">＝ <span class="step-blank">7</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) (－27) － 13 ＋ 55
-          </div>
-          <div class="step-area">
-            <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">－40 ＋ 55</span></span>
-              <span class="step-line">＝ <span class="ans-char">55 － 40</span></span>
-              <span class="step-line">＝ <span class="ans-char">15</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 6 頁，共 7 頁）
-      </footer>
-    </div>
-
-
-    <!-- ============================================================
-         【第 7 頁】題型七：數線上兩點間距離（獨立換頁）
-         ============================================================ -->
-    <div class="sheet-page" id="page-7">
-      <canvas class="drawing-canvas"></canvas>
-
-      <div class="exam-header">
-        <div class="exam-title">國中數學（七上）整數加減混合運算 隨堂練習單</div>
-        <div class="exam-subtitle">適性學習版・漸進褪除鷹架</div>
-        <div class="student-info">
-          <span>隨堂練習單（續頁）</span>
-        </div>
-      </div>
-
-      <div class="type-section">
-        <div class="type-header">
-          <div class="type-title">題型七：數線上兩點間的距離與座標運算</div>
-          <div class="type-rule">解題原則：數線上兩點距離＝「大座標 － 小座標」，距離恆為正數。</div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (1) 數線上 A(5)、B(－3)，求 AB 兩點間的距離。
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 5 － (－3)</span>
-            <span class="step-line">＝ 5 ＋ <span class="step-blank guide">3</span></span>
-            <span class="step-line">＝ <span class="step-blank">8</span></span>
-          </div>
-        </div>
-
-        <div class="question-item" onclick="toggleItemAnswer(this)">
-          <div class="q-main">
-            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (2) 數線上 P(2)、Q(－7)，求 PQ 兩點間的距離。
-          </div>
-          <div class="step-area">
-            <span class="step-line">＝ 2 － (－7)</span>
-            <span class="step-line">＝ 2 ＋ <span class="step-blank">7</span></span>
+            <span class="step-line">＝ 15 <span class="step-blank">－6</span></span>
             <span class="step-line">＝ <span class="step-blank">9</span></span>
           </div>
         </div>
@@ -1224,23 +788,72 @@
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (3) 數線上 M(－1)、N(－9)，求 MN 兩點間的距離。
+            (4) 20 ＋ (－8)
           </div>
           <div class="step-area">
-            <span class="step-line">＝ －1 － (－9)</span>
-            <span class="step-line">＝ －1 ＋ <span class="step-blank">9</span></span>
-            <span class="step-line">＝ <span class="step-blank">8</span></span>
+            <span class="step-line">＝ <span class="step-blank">20</span> <span class="step-blank">－8</span></span>
+            <span class="step-line">＝ <span class="step-blank">12</span></span>
           </div>
         </div>
 
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (4) 數線上 C(－4)、D(－15)，求 CD 兩點間的距離。
+            (5) 25 ＋ (－9)
           </div>
           <div class="step-area">
-            <span class="step-line">＝ －4 － (<span class="step-blank">－15</span>)</span>
-            <span class="step-line">＝ －4 ＋ <span class="step-blank">15</span></span>
+            <div class="write-space">
+              <span class="step-line">＝ <span class="ans-char">25 － 9</span></span>
+              <span class="step-line">＝ <span class="ans-char">16</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-footer">
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 2 頁，共 7 頁）
+      </footer>
+    </div>
+
+
+    <!-- ============================================================
+         【第 3 頁】關卡三：正數 － 負數（動動腦 5：去括號 －－得＋）
+         ============================================================ -->
+    <div class="sheet-page" id="page-3">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="exam-header">
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡三（正數減負數）</div>
+        <div class="student-info">
+          <span>隨堂練習單（續頁）</span>
+        </div>
+      </div>
+
+      <div class="type-section">
+        <div class="type-header">
+          <div class="type-title">關卡三：正數 － 負數（去括號法則：「－－得＋」）</div>
+          <div class="type-rule">解題原則：負負得正，「－(－) 化簡為 ＋」，轉化為一般加法。</div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (1) 5 － (－3)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 5 ＋ <span class="step-blank guide">3</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">8</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (2) 6 － (－5)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 6 ＋ <span class="step-blank">5</span></span>
             <span class="step-line">＝ <span class="step-blank">11</span></span>
           </div>
         </div>
@@ -1248,11 +861,374 @@
         <div class="question-item" onclick="toggleItemAnswer(this)">
           <div class="q-main">
             <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
-            (5) 數線上 A(3)、B 兩點，已知 AB 距離＝8，且 B 點在 A 點的左邊，試求 B 點座標。
+            (3) 8 － (－8)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 8 <span class="step-blank">＋8</span></span>
+            <span class="step-line">＝ <span class="step-blank">16</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (4) 11 － (－5)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ <span class="step-blank">11</span> <span class="step-blank">＋5</span></span>
+            <span class="step-line">＝ <span class="step-blank">16</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (5) 15 － (－11)
           </div>
           <div class="step-area">
             <div class="write-space">
-              <span class="step-line">＝ <span class="ans-char">3 － 8</span></span>
+              <span class="step-line">＝ <span class="ans-char">15 ＋ 11</span></span>
+              <span class="step-line">＝ <span class="ans-char">26</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-footer">
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 3 頁，共 7 頁）
+      </footer>
+    </div>
+
+
+    <!-- ============================================================
+         【第 4 頁】關卡四：同號數相加（動動腦 6：負負相加）
+         ============================================================ -->
+    <div class="sheet-page" id="page-4">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="exam-header">
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡四（負負同號相加）</div>
+        <div class="student-info">
+          <span>隨堂練習單（續頁）</span>
+        </div>
+      </div>
+
+      <div class="type-section">
+        <div class="type-header">
+          <div class="type-title">關卡四：同號數相加（負負相聚，越欠越多）</div>
+          <div class="type-rule">解題原則：負數加負數化簡為「－A － B」，同號數相加，結果保持負號。</div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (1) (－3) ＋ (－5)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －3 － <span class="step-blank guide">5</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">－8</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (2) (－4) ＋ (－6)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －4 － <span class="step-blank">6</span></span>
+            <span class="step-line">＝ <span class="step-blank">－10</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (3) (－7) ＋ (－8)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －7 <span class="step-blank">－8</span></span>
+            <span class="step-line">＝ <span class="step-blank">－15</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (4) (－10) ＋ (－12)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ <span class="step-blank">－10</span> <span class="step-blank">－12</span></span>
+            <span class="step-line">＝ <span class="step-blank">－22</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (5) (－15) ＋ (－9)
+          </div>
+          <div class="step-area">
+            <div class="write-space">
+              <span class="step-line">＝ <span class="ans-char">－15 － 9</span></span>
+              <span class="step-line">＝ <span class="ans-char">－24</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-footer">
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 4 頁，共 7 頁）
+      </footer>
+    </div>
+
+
+    <!-- ============================================================
+         【第 5 頁】關卡五：負數 － 負數（動動腦 7：負數加正數）
+         ============================================================ -->
+    <div class="sheet-page" id="page-5">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="exam-header">
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡五（負數減負數）</div>
+        <div class="student-info">
+          <span>隨堂練習單（續頁）</span>
+        </div>
+      </div>
+
+      <div class="type-section">
+        <div class="type-header">
+          <div class="type-title">關卡五：負數 － 負數（負負得正，轉為負加正）</div>
+          <div class="type-rule">解題原則：化簡為「－A ＋ B」，比數字大小決定正負，大數減小數。</div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (1) (－3) － (－5)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －3 ＋ <span class="step-blank guide">5</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">2</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (2) (－4) － (－9)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －4 ＋ <span class="step-blank">9</span></span>
+            <span class="step-line">＝ <span class="step-blank">5</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (3) (－1) － (－8)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －1 <span class="step-blank">＋8</span></span>
+            <span class="step-line">＝ <span class="step-blank">7</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (4) (－7) － (－12)
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ <span class="step-blank">－7</span> <span class="step-blank">＋12</span></span>
+            <span class="step-line">＝ <span class="step-blank">5</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (5) (－6) － (－15)
+          </div>
+          <div class="step-area">
+            <div class="write-space">
+              <span class="step-line">＝ <span class="ans-char">－6 ＋ 15</span></span>
+              <span class="step-line">＝ <span class="ans-char">9</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-footer">
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 5 頁，共 7 頁）
+      </footer>
+    </div>
+
+
+    <!-- ============================================================
+         【第 6 頁】關卡六：數線上兩點間的距離（大座標 － 小座標）
+         ============================================================ -->
+    <div class="sheet-page" id="page-6">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="exam-header">
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡六（數線上兩點距離）</div>
+        <div class="student-info">
+          <span>隨堂練習單（續頁）</span>
+        </div>
+      </div>
+
+      <div class="type-section">
+        <div class="type-header">
+          <div class="type-title">關卡六：數線上兩點間的距離（公式：大座標 － 小座標）</div>
+          <div class="type-rule">解題原則：以座標大的數減去座標小的數，距離永遠為正數。</div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (1) 數線上 A(4)、B(－2)，求 AB 兩點間的距離。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 4 － (－2)</span>
+            <span class="step-line">＝ 4 ＋ <span class="step-blank guide">2</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">6</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (2) 數線上 A(5)、B(－3)，求 AB 兩點間的距離。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 5 － (－3)</span>
+            <span class="step-line">＝ 5 ＋ <span class="step-blank">3</span></span>
+            <span class="step-line">＝ <span class="step-blank">8</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (3) 數線上 P(－1)、Q(－5)，求 PQ 兩點間的距離。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －1 － (－5)</span>
+            <span class="step-line">＝ －1 ＋ <span class="step-blank">5</span></span>
+            <span class="step-line">＝ <span class="step-blank">4</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (4) 數線上 C(6)、D(－7)，求 CD 兩點間的距離。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 6 － (<span class="step-blank">－7</span>)</span>
+            <span class="step-line">＝ 6 ＋ <span class="step-blank">7</span></span>
+            <span class="step-line">＝ <span class="step-blank">13</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (5) 數線上 M(－2)、N(－9)，求 MN 兩點間的距離。
+          </div>
+          <div class="step-area">
+            <div class="write-space">
+              <span class="step-line">＝ <span class="ans-char">－2 － (－9)</span></span>
+              <span class="step-line">＝ <span class="ans-char">－2 ＋ 9</span></span>
+              <span class="step-line">＝ <span class="ans-char">7</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="page-footer">
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 6 頁，共 7 頁）
+      </footer>
+    </div>
+
+
+    <!-- ============================================================
+         【第 7 頁】關卡七：已知距離求未知點座標
+         ============================================================ -->
+    <div class="sheet-page" id="page-7">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="exam-header">
+        <div class="exam-title">國中數學（七上）正負數加減與數線距離 隨堂練習單</div>
+        <div class="exam-subtitle">適性鷹架版・關卡七（求未知點座標）</div>
+        <div class="student-info">
+          <span>隨堂練習單（續頁）</span>
+        </div>
+      </div>
+
+      <div class="type-section">
+        <div class="type-header">
+          <div class="type-title">關卡七：已知兩點距離求未知座標（右加左減）</div>
+          <div class="type-rule">解題原則：求右邊座標用加法（基準 ＋ 距離）；求左邊座標用減法（基準 － 距離）。</div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (1) 數線上 B 點座標為 5，已知 AB 距離＝3，且 A 點在 B 點右邊，求 A 點座標。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 5 ＋ <span class="step-blank guide">3</span></span>
+            <span class="step-line">＝ <span class="step-blank guide">8</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (2) 數線上 B 點座標為 5，已知 AB 距離＝3，且 A 點在 B 點左邊，求 A 點座標。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ 5 － <span class="step-blank">3</span></span>
+            <span class="step-line">＝ <span class="step-blank">2</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (3) 數線上 B 點座標為 －2，已知 AB 距離＝9，且 A 點在 B 點右邊，求 A 點座標。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ －2 ＋ <span class="step-blank">9</span></span>
+            <span class="step-line">＝ <span class="step-blank">7</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (4) 數線上 B 點座標為 －2，已知 AB 距離＝9，且 A 點在 B 點左邊，求 A 點座標。
+          </div>
+          <div class="step-area">
+            <span class="step-line">＝ <span class="step-blank">－2</span> <span class="step-blank">－9</span></span>
+            <span class="step-line">＝ <span class="step-blank">－11</span></span>
+          </div>
+        </div>
+
+        <div class="question-item" onclick="toggleItemAnswer(this)">
+          <div class="q-main">
+            <button class="btn-speech no-print" onclick="speakQuestion(this, event)" title="語音朗讀（不含答案）">📢</button>
+            (5) 數線上 P 點座標為 1，已知 PQ 距離＝6，且 Q 點在 P 點左邊，求 Q 點座標。
+          </div>
+          <div class="step-area">
+            <div class="write-space">
+              <span class="step-line">＝ <span class="ans-char">1 － 6</span></span>
               <span class="step-line">＝ <span class="ans-char">－5</span></span>
             </div>
           </div>
@@ -1260,7 +1236,7 @@
       </div>
 
       <footer class="page-footer">
-        國中數學（七上）1-2 整數加減混合運算 隨堂練習單（第 7 頁，共 7 頁）
+        國中數學（七上）1-2 正負數加減 隨堂練習單（第 7 頁，共 7 頁）
       </footer>
     </div>
 
