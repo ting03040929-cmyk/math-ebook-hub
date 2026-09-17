@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國中數學 七上 1-2 正負數的加減 - 雙模式自製電子書（支援語音報讀）</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f7fc;
+      font-family: "Times New Roman", "標楷體", "DFKai-SB", "BiauKai", serif;
+      font-size: 14pt;
+      line-height: 1.42;
+      color: #0f172a;
+      user-select: auto;
+    }
+
+    /* 課堂懸浮工具列 (純 Emoji 極簡膠囊) */
+    .classroom-toolbar {
+      position: fixed;
+      top: 14px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 4px 8px;
+      border-radius: 40px;
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      box-shadow: 0 4px 22px rgba(0, 0, 0, 0.12);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .tool-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+      color: #334155;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+      user-select: none;
+    }
+    .tool-btn:hover {
+      background: #f1f5f9;
+      transform: scale(1.1);
+    }
+    .tool-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .btn-toggle-ans.active {
+      background: #eff6ff;
+      border-color: #0284c7;
+    }
+    .toolbar-divider {
+      width: 1px;
+      height: 18px;
+      background: #cbd5e1;
+      margin: 0 3px;
+    }
+
+    /* 語音面板 (TTS Options) */
+    .tts-options {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      margin-left: 2px;
+    }
+    .tts-speed-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .tts-speed-btn.active {
+      background: #0284c7;
+      color: #fff;
+      border-color: #0284c7;
+    }
+
+    /* 單題/單句朗讀小按鈕 */
+    .tts-play-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      font-size: 13px;
+      border-radius: 50%;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #0284c7;
+      cursor: pointer;
+      margin-right: 6px;
+      vertical-align: middle;
+      transition: all 0.15s;
+      user-select: none;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .tts-play-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      transform: scale(1.15);
+    }
+    .tts-play-btn.playing {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+      animation: ttsPulse 1s infinite;
+    }
+    @keyframes ttsPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    /* 正在朗讀的視覺高亮 */
+    .speaking {
+      background-color: #fef08a !important;
+      box-shadow: 0 0 0 2px #facc15 !important;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+
+    /* 目錄跳轉選單 (TOC Floating Menu) */
+    .toc-menu {
+      display: none;
+      position: absolute;
+      top: 46px;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      padding: 6px 0;
+      min-width: 280px;
+      max-height: 420px;
+      overflow-y: auto;
+      z-index: 10000;
+    }
+    .toc-menu.show {
+      display: block;
+      animation: tocFadeIn 0.15s ease-out;
+    }
+    @keyframes tocFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toc-menu-title {
+      padding: 6px 16px 8px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #64748b;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .toc-menu-item {
+      padding: 8px 16px;
+      font-size: 14px;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.12s, color 0.12s;
+    }
+    .toc-menu-item:hover {
+      background: #eff6ff;
+      color: #0284c7;
+      font-weight: bold;
+    }
+    .toc-page-badge {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: normal;
+    }
+    .toc-menu-item:hover .toc-page-badge {
+      color: #0284c7;
+    }
+
+    /* 畫筆面板 */
+    .pen-options {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      margin-left: 2px;
+    }
+    .color-picker {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .color-dot.active {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 2px #0f172a;
+    }
+    .sub-divider {
+      width: 1px;
+      height: 14px;
+      background: #cbd5e1;
+      margin: 0 2px;
+    }
+    .size-picker {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .size-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .size-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+
+    /* A4 頁面容器 */
+    .pages-container {
+      padding: 16px 0 40px 0;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 11mm 14mm 12mm 14mm;
+      margin: 0 auto 20px auto;
+      background: #ffffff;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+      page-break-after: always;
+      break-after: page;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* 全頁透明畫布 */
+    .drawing-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 60;
+      pointer-events: none;
+    }
+    body.pen-mode .drawing-canvas {
+      pointer-events: auto;
+      cursor: crosshair;
+    }
+
+    /* 頁首與頁尾 */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid #0f4c81;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .main-title {
+      font-size: 16pt;
+      font-weight: bold;
+      color: #0f4c81;
+      letter-spacing: 0.5px;
+    }
+    .user-info {
+      font-size: 12pt;
+      color: #334155;
+      letter-spacing: 1px;
+    }
+    .page-footer {
+      position: absolute;
+      bottom: 6mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11pt;
+      color: #64748b;
+    }
+
+    /* 關卡主題橫幅 */
+    .section-banner {
+      font-size: 14pt;
+      font-weight: bold;
+      background: #e0f2fe;
+      color: #0369a1;
+      border-left: 6px solid #0284c7;
+      padding: 4px 10px;
+      margin: 4px 0 8px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quest-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 11pt;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    /* 觀念錨點資訊卡 (Concept Card) */
+    .concept-box {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .concept-title {
+      font-weight: bold;
+      color: #0f4c81;
+      margin-bottom: 4px;
+      font-size: 13.5pt;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .concept-item {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 13pt;
+      line-height: 1.4;
+    }
+
+    /* 題目互動項目 */
+    .interactive-item {
+      padding: 4px 6px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      transition: background 0.15s;
+    }
+    body:not(.pen-mode) .interactive-item {
+      cursor: pointer;
+    }
+    body:not(.pen-mode) .interactive-item:hover {
+      background-color: #f8fafc;
+      outline: 1.5px dashed #93c5fd;
+    }
+    .item-header {
+      display: flex;
+      align-items: center;
+    }
+    .item-title {
+      font-size: 14pt;
+      font-weight: bold;
+      flex: 1;
+    }
+
+    /* 題幹答案顯現樣式（僅在算式最後一步揭曉時才亮起） */
+    .ans-reveal {
+      display: inline-block;
+      min-width: 24px;
+      color: transparent;
+      font-weight: bold;
+      transition: color 0.18s;
+    }
+    .show-ans .ans-reveal,
+    .interactive-item.ans-done .ans-reveal {
+      color: #dc2626 !important;
+    }
+
+    /* 計算題 3~4 行純淨手寫空間（細虛線框） */
+    .calc-workspace {
+      min-height: 75px; /* 3~4 行標準手寫空間 */
+      margin: 4px 0 6px 28px;
+      padding: 6px 12px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 6px;
+      background-color: #f8fafc;
+      position: relative;
+    }
+    .calc-solution {
+      font-size: 13.5pt;
+      line-height: 1.6;
+    }
+    .calc-step {
+      color: transparent;
+      line-height: 1.6;
+      transition: color 0.15s ease;
+      user-select: none;
+      font-family: "Times New Roman", serif;
+      font-weight: bold;
+    }
+    .calc-step.show,
+    .show-ans .calc-step {
+      color: #dc2626 !important;
+    }
+
+    /* 填空書寫線 */
+    .write-blank {
+      display: inline-block;
+      min-width: 60px;
+      border-bottom: 1.5px solid #334155;
+      text-align: center;
+      padding: 0 4px;
+      margin: 0 2px;
+    }
+
+    /* 雙欄網格 */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      row-gap: 4px;
+    }
+
+    /* 成就認證框 */
+    .achievement-card {
+      background: #eff6ff;
+      border: 2px solid #0284c7;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stamp-box {
+      border: 2px dashed #dc2626;
+      border-radius: 6px;
+      padding: 6px 14px;
+      color: #dc2626;
+      font-weight: bold;
+      font-size: 14pt;
+      transform: rotate(-3deg);
+      background: #fef2f2;
+    }
+
+    /* 列印控制 (Print Styles: 嚴格 1 頁對應 1 張 A4，杜絕溢頁) */
+    @media print {
+      html, body {
+        width: 100% !important;
+        height: auto !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print,
+      .classroom-toolbar,
+      .toc-menu,
+      .drawing-canvas,
+      .tts-play-btn,
+      .tts-options {
+        display: none !important;
+      }
+      .speaking {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      .pages-container {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .page {
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        height: 275mm !important;
+        max-height: 275mm !important;
+        min-height: 0 !important;
+        padding: 8mm 12mm 10mm 12mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+      }
+      .page:last-child,
+      .page:last-of-type {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+      .page-footer {
+        position: static !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-top: auto !important;
+        padding-top: 4px !important;
+        padding-bottom: 1mm !important;
+      }
+      .interactive-item:hover {
+        background: transparent !important;
+        outline: none !important;
+      }
+      .ans-reveal {
+        color: transparent !important;
+      }
+      .write-blank {
+        border-bottom: 1.5px solid #000 !important;
+      }
+      .calc-workspace {
+        border: 1.5px dashed #94a3b8 !important;
+        background: transparent !important;
+        min-height: 75px !important;
+      }
+      .calc-step {
+        display: none !important;
+      }
+      .stamp-box {
+        background: transparent !important;
+        border-color: #94a3b8 !important;
+        color: #94a3b8 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 課堂懸浮工具列 (純 Emoji 極簡膠囊) -->
+  <div class="classroom-toolbar no-print">
+    <!-- 目錄跳轉按鈕 -->
+    <div style="position: relative;">
+      <button class="tool-btn" id="tocBtn" onclick="toggleTocMenu(event)" title="章節目錄導覽">
+        📑
+      </button>
+      <div class="toc-menu" id="tocMenu">
+        <div class="toc-menu-title">📖 單元章節目錄</div>
+        <div class="toc-menu-item" onclick="jumpTo('page-1')"><span>第 1 關：大減小 vs 小減大與去括號口訣</span><span class="toc-page-badge">P.1</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-2')"><span>第 2 關：同號相加（負負相聚）</span><span class="toc-page-badge">P.2</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-3')"><span>第 3 關：異號相減（正負抵消）</span><span class="toc-page-badge">P.3</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-4')"><span>第 4 關：負負得正（連續減號變加號）</span><span class="toc-page-badge">P.4</span></div>
+        <div class="toc-menu-item" onclick="jumpTo('page-5')"><span>第 5 關：數線兩點距離與過關認證</span><span class="toc-page-badge">P.5</span></div>
+      </div>
+    </div>
+
+    <!-- 語音朗讀工具開關 -->
+    <button class="tool-btn" id="ttsToggleBtn" onclick="toggleTtsOptions()" title="語音報讀工具">
+      🔊
+    </button>
+
+    <!-- 語音設定小面板 -->
+    <div class="tts-options" id="ttsOptions">
+      <button class="tts-speed-btn" onclick="setTtsSpeed(0.8, this)" title="慢速朗讀">0.8x</button>
+      <button class="tts-speed-btn active" onclick="setTtsSpeed(0.9, this)" title="特教推薦語速">0.9x</button>
+      <button class="tts-speed-btn" onclick="setTtsSpeed(1.0, this)" title="正常語速">1.0x</button>
+      <div class="sub-divider"></div>
+      <button class="tool-btn" style="width:26px; height:26px; font-size:13px;" onclick="stopTts()" title="停止朗讀">
+        ⏹️
+      </button>
+    </div>
+
+    <!-- 一鍵全開答案按鈕 -->
+    <button class="tool-btn btn-toggle-ans" id="toggleAllAnsBtn" onclick="toggleAllAnswers()" title="一鍵全開/全隱算式與答案">
+      <span id="ansIcon">👁️</span>
+    </button>
+    
+    <!-- 畫筆切換按鈕 -->
+    <button class="tool-btn" id="penBtn" onclick="togglePenMode()" title="螢光筆/板書筆">
+      ✏️
+    </button>
+    
+    <!-- 畫筆顏色與粗細選單 -->
+    <div class="pen-options" id="penOptions">
+      <div class="color-picker">
+        <span class="color-dot active" style="background:#facc15;" onclick="setPenColor('rgba(250, 204, 21, 0.45)', this)" title="螢光黃"></span>
+        <span class="color-dot" style="background:#ef4444;" onclick="setPenColor('rgba(239, 68, 68, 0.85)', this)" title="紅筆"></span>
+        <span class="color-dot" style="background:#3b82f6;" onclick="setPenColor('rgba(37, 99, 235, 0.85)', this)" title="藍筆"></span>
+        <span class="color-dot" style="background:#10b981;" onclick="setPenColor('rgba(16, 185, 129, 0.85)', this)" title="綠筆"></span>
+      </div>
+      <div class="sub-divider"></div>
+      <div class="size-picker">
+        <button class="size-btn active" onclick="setPenSize(3, this)">細</button>
+        <button class="size-btn" onclick="setPenSize(8, this)">中</button>
+        <button class="size-btn" onclick="setPenSize(16, this)">粗</button>
+      </div>
+    </div>
+
+    <!-- 清除畫跡 -->
+    <button class="tool-btn" onclick="clearAllDrawings()" title="清除本頁/全卷畫筆">
+      🧹
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- 列印為學生白紙考卷 -->
+    <button class="tool-btn" onclick="window.print()" title="列印為學生白紙考卷">
+      🖨️
+    </button>
+  </div>
+
+  <!-- 五頁闖關容器 -->
+  <div class="pages-container">
+
+    <!-- ==================== 第 1 頁：大減小 vs 小減大與去括號口訣 ==================== -->
+    <div class="page" id="page-1">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正負數的加減</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 運算起步：大減小得正、小減大得負與符號口訣</span>
+        <span class="quest-badge">第 1 關</span>
+      </div>
+
+      <!-- 觀念錨點 1：大小相減原則 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>💡 觀念核心一：大減小 vs 小減大</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀觀念">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. <b>大數 － 小數 ＝ 正數</b>（例如：10 － 7 ＝ 3）。<br>
+          2. <b>小數 － 大數 ＝ 負數</b>（例如：7 － 10 ＝ －3）。<br>
+          👉 口訣：<b>小減大必為負，用大減小再加負號</b>。
+        </div>
+      </div>
+
+      <!-- 觀念錨點 2：去括號神仙口訣卡 -->
+      <div class="concept-box" style="background:#f0fdf4; border-color:#bbf7d0;">
+        <div class="concept-title" style="color:#15803d;">
+          <span>⚡ 觀念核心二：去括號神仙口訣（整理符號必備）</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀口訣">📢</button>
+        </div>
+        <div class="concept-grid">
+          <div class="concept-item"><b>＋（＋）得正</b>：＋（＋3）＝ ＋3</div>
+          <div class="concept-item"><b>＋（－）得負</b>：＋（－5）＝ －5</div>
+          <div class="concept-item"><b>－（＋）得負</b>：－（＋2）＝ －2</div>
+          <div class="concept-item"><b>－（－）得正</b>：－（－4）＝ ＋4</div>
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 6px 0 4px 0;">✍️ 小減大基礎實戰（點擊逐步揭曉純算式）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">1. 4 － 11 ＝ <span class="write-blank"><span class="ans-reveal">－7</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －（11 － 4）</div>
+              <div class="calc-step">＝ －7</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">2. 12 － 23 ＝ <span class="write-blank"><span class="ans-reveal">－11</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －（23 － 12）</div>
+              <div class="calc-step">＝ －11</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">3. 21 － 40 ＝ <span class="write-blank"><span class="ans-reveal">－19</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －（40 － 21）</div>
+              <div class="calc-step">＝ －19</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">4. 29 － 100 ＝ <span class="write-blank"><span class="ans-reveal">－71</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －（100 － 29）</div>
+              <div class="calc-step">＝ －71</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 1 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 2 頁：同號相加（負負相聚） ==================== -->
+    <div class="page" id="page-2">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正負數的加減</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 運算核心：同號相加（負負相聚，越欠越多）</span>
+        <span class="quest-badge">第 2 關</span>
+      </div>
+
+      <!-- 核心解題鷹架卡 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>💡 觀念核心：同號相加法則</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀觀念">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. <b>直接都先去括號</b>：讓每個數字前面只有一個正負符號。<br>
+          2. <b>同號相加</b>：兩個都是負數（如 －3 與 －5），直接把數字相加，<b>前面保留負號</b>（越欠越多）！
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 計算演練（一個等號一步驟，點擊依序顯現）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">1. （－3）－ 5 ＝ <span class="write-blank"><span class="ans-reveal">－8</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －3 － 5</div>
+              <div class="calc-step">＝ －8</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">2. （－8）－ 6 ＝ <span class="write-blank"><span class="ans-reveal">－14</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －8 － 6</div>
+              <div class="calc-step">＝ －14</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">3. （－3）＋（－5）＝ <span class="write-blank"><span class="ans-reveal">－8</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －3 － 5</div>
+              <div class="calc-step">＝ －8</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">4. （－2）＋（－6）＝ <span class="write-blank"><span class="ans-reveal">－8</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －2 － 6</div>
+              <div class="calc-step">＝ －8</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">5. （－9）－ 7 ＝ <span class="write-blank"><span class="ans-reveal">－16</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －9 － 7</div>
+              <div class="calc-step">＝ －16</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">6. （－4）＋（－2）＝ <span class="write-blank"><span class="ans-reveal">－6</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －4 － 2</div>
+              <div class="calc-step">＝ －6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 2 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 3 頁：異號相減（正負抵消） ==================== -->
+    <div class="page" id="page-3">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正負數的加減</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 運算核心：異號相減（正負互相抵消，看誰剩得多）</span>
+        <span class="quest-badge">第 3 關</span>
+      </div>
+
+      <!-- 核心解題鷹架卡 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>💡 觀念核心：異號相減法則</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀觀念">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. <b>直接都先去括號</b>：整理出乾淨的數值與符號。<br>
+          2. <b>異號相減</b>：一正一負互相抵消！用<b>大數減小數</b>，符號<b>跟隨數字比較大的那一邊</b>。
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 計算演練（一個等號一步驟，點擊依序顯現）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">1. （－3）＋ 5 ＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 5 － 3</div>
+              <div class="calc-step">＝ 2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">2. 6 ＋（－4）＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 6 － 4</div>
+              <div class="calc-step">＝ 2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">3. 3 ＋（－5）＝ <span class="write-blank"><span class="ans-reveal">－2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 3 － 5</div>
+              <div class="calc-step">＝ －2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">4. 4 ＋（－6）＝ <span class="write-blank"><span class="ans-reveal">－2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 4 － 6</div>
+              <div class="calc-step">＝ －2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">5. （－9）＋ 7 ＝ <span class="write-blank"><span class="ans-reveal">－2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －（9 － 7）</div>
+              <div class="calc-step">＝ －2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">6. 2 ＋（－9）＝ <span class="write-blank"><span class="ans-reveal">－7</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 2 － 9</div>
+              <div class="calc-step">＝ －7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 3 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 4 頁：負負得正（連續減號變加號） ==================== -->
+    <div class="page" id="page-4">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正負數的加減</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 運算核心：負負得正（減去負數等於加上正數）</span>
+        <span class="quest-badge">第 4 關</span>
+      </div>
+
+      <!-- 核心解題鷹架卡 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>💡 觀念核心：負負得正法則</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀觀念">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. 看到 <b>－（－b）</b>，直接化簡成 <b>＋ b</b>（例如：5 －（－3）＝ 5 ＋ 3 ＝ 8）。<br>
+          2. 若前面也是負數，例如（－3）－（－4），先變為 <b>－3 ＋ 4 ＝ 1</b>。
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 計算演練（一個等號一步驟，點擊依序顯現）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">1. 5 －（－3）＝ <span class="write-blank"><span class="ans-reveal">8</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 5 ＋ 3</div>
+              <div class="calc-step">＝ 8</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">2. 6 －（－5）＝ <span class="write-blank"><span class="ans-reveal">11</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 6 ＋ 5</div>
+              <div class="calc-step">＝ 11</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">3. （－3）－（－5）＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －3 ＋ 5</div>
+              <div class="calc-step">＝ 2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">4. （－1）－（－8）＝ <span class="write-blank"><span class="ans-reveal">7</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －1 ＋ 8</div>
+              <div class="calc-step">＝ 7</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">5. （－4）－（－9）＝ <span class="write-blank"><span class="ans-reveal">5</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －4 ＋ 9</div>
+              <div class="calc-step">＝ 5</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">6. （－15）－（－8）＝ <span class="write-blank"><span class="ans-reveal">－7</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ －15 ＋ 8</div>
+              <div class="calc-step">＝ －7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">第 4 頁，共 5 頁</div>
+    </div>
+
+    <!-- ==================== 第 5 頁：數線兩點距離與過關認證 ==================== -->
+    <div class="page" id="page-5">
+      <canvas class="drawing-canvas"></canvas>
+
+      <div class="header-bar">
+        <div class="main-title">國中數學（七上）第一單元：正負數的加減</div>
+        <div class="user-info">七年____班 座號：____ 姓名：___________</div>
+      </div>
+
+      <div class="section-banner">
+        <span>🎯 綜合素養：數線上兩點間的距離與闖關認證</span>
+        <span class="quest-badge">第 5 關</span>
+      </div>
+
+      <!-- 核心解題鷹架卡 -->
+      <div class="concept-box">
+        <div class="concept-title">
+          <span>📏 觀念核心：數線上兩點間的距離</span>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀觀念">📢</button>
+        </div>
+        <div style="font-size: 13pt; line-height: 1.5;">
+          1. 數線上任意兩點間的距離：<b>大數 － 小數</b>。<br>
+          2. 距離具有非負性，算出來的距離長度<b>絕對是正數（或 0）</b>！
+        </div>
+      </div>
+
+      <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 距離求解實戰（一個等號一步驟）：</div>
+
+      <div class="grid-2col">
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">1. 數線上 A(4)、B(0)，求 AB 長度：<span class="write-blank"><span class="ans-reveal">4</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 4 － 0</div>
+              <div class="calc-step">＝ 4</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">2. 數線上 A(4)、B(－2)，求 AB 長度：<span class="write-blank"><span class="ans-reveal">6</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 4 －（－2）</div>
+              <div class="calc-step">＝ 4 ＋ 2</div>
+              <div class="calc-step">＝ 6</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">3. 數線上 A(－5)、B(－1)，求 AB 長度：<span class="write-blank"><span class="ans-reveal">4</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝（－1）－（－5）</div>
+              <div class="calc-step">＝ －1 ＋ 5</div>
+              <div class="calc-step">＝ 4</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+          <div class="item-header">
+            <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
+            <div class="item-title">4. B點座標5，若距離AB＝3，求A點座標：<span class="write-blank"><span class="ans-reveal">8 或 2</span></span></div>
+          </div>
+          <div class="calc-workspace">
+            <div class="calc-solution">
+              <div class="calc-step">＝ 5 ＋ 3 ＝ 8（在B右邊）</div>
+              <div class="calc-step">＝ 5 － 3 ＝ 2（在B左邊）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 闖關認證卡 -->
+      <div class="achievement-card">
+        <div>
+          <div style="font-size: 14pt; font-weight: bold; color: #0369a1;">🏆 恭喜完成 1-2 正負數加減全單元特訓！</div>
+          <div style="font-size: 12pt; color: #475569; margin-top: 2px;">
+            學習挑戰星等：⭐⭐⭐⭐⭐（請自評塗滿）
+          </div>
+        </div>
+        <div class="stamp-box">
+          特教教學‧認證合格
+        </div>
+      </div>
+
+      <div class="page-footer">第 5 頁，共 5 頁</div>
+    </div>
+
+  </div>
+
+  <!-- 互動控制 JavaScript -->
+  <script>
+    let isAllAnsShown = false;
+    let isPenMode = false;
+    let currentColor = 'rgba(250, 204, 21, 0.45)'; // 螢光黃
+    let currentSize = 3;
+    const canvases = [];
+
+    // 語音朗讀狀態
+    let currentTtsSpeed = 0.9;
+    let currentSpeakingEl = null;
+
+    // 0. 目錄切換與跳轉
+    function toggleTocMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('tocMenu');
+      if (menu) menu.classList.toggle('show');
+    }
+
+    function jumpTo(targetId) {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const menu = document.getElementById('tocMenu');
+      if (menu) menu.classList.remove('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('tocMenu');
+      const btn = document.getElementById('tocBtn');
+      if (menu && menu.classList.contains('show')) {
+        if (!menu.contains(e.target) && e.target !== btn) {
+          menu.classList.remove('show');
+        }
+      }
+    });
+
+    // 1. 語音朗讀控制（答案與算式絕對保密，防洩漏）
+    function toggleTtsOptions() {
+      const opts = document.getElementById('ttsOptions');
+      const btn = document.getElementById('ttsToggleBtn');
+      if (!opts) return;
+      if (opts.style.display === 'inline-flex') {
+        opts.style.display = 'none';
+        btn.classList.remove('active');
+      } else {
+        opts.style.display = 'inline-flex';
+        btn.classList.add('active');
+      }
+    }
+
+    function setTtsSpeed(speed, btnEl) {
+      currentTtsSpeed = speed;
+      document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        stopTts();
+      }
+    }
+
+    function stopTts() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentSpeakingEl) {
+        currentSpeakingEl.classList.remove('speaking');
+        const pBtn = currentSpeakingEl.querySelector('.tts-play-btn');
+        if (pBtn) pBtn.classList.remove('playing');
+        currentSpeakingEl = null;
+      }
+    }
+
+    function formatMathSpeech(rawText) {
+      if (!rawText) return '';
+      let s = rawText;
+      s = s.replace(/七年____班.*姓名：___________/g, '');
+      // 正負數符號智慧轉換
+      s = s.replace(/＋(\d+(\.\d+)?)/g, '加 $1 ');
+      s = s.replace(/\+(\d+(\.\d+)?)/g, '加 $1 ');
+      s = s.replace(/－(\d+(\.\d+)?)/g, '減 $1 ');
+      s = s.replace(/-(\d+(\.\d+)?)/g, '減 $1 ');
+      // 括號負數
+      s = s.replace(/（－(\d+(\.\d+)?)）/g, '負 $1 ');
+      s = s.replace(/\(－(\d+(\.\d+)?)\)/g, '負 $1 ');
+      s = s.replace(/\(-(\d+(\.\d+)?)\)/g, '負 $1 ');
+      // 符號轉譯
+      s = s.replace(/＝/g, '等於');
+      s = s.replace(/A\(4\)/g, 'A點4');
+      s = s.replace(/B\(0\)/g, 'B點0');
+      s = s.replace(/B\(－2\)/g, 'B點負2');
+      s = s.replace(/A\(－5\)/g, 'A點負5');
+      s = s.replace(/B\(－1\)/g, 'B點負1');
+      s = s.replace(/AB/g, '線段 A B');
+      s = s.replace(/【|】/g, ' ');
+      s = s.replace(/____/g, '空格');
+      return s;
+    }
+
+    function speakElement(el, e) {
+      if (e) e.stopPropagation();
+      if (!('speechSynthesis' in window)) {
+        alert('您的瀏覽器不支援語音合成（Web Speech API）。建議使用 Chrome 或 Edge 瀏覽器！');
+        return;
+      }
+
+      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
+        stopTts();
+        return;
+      }
+
+      stopTts();
+
+      // 提取文字（略除按鈕、畫布、以及計算算式，防止唸出答案）
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('.tts-play-btn, .drawing-canvas, .calc-workspace, script').forEach(n => n.remove());
+
+      // 【核心規範：答案絕對不能唸出來！】題幹答案置換為「空格」
+      clone.querySelectorAll('.ans-reveal').forEach(n => {
+        n.textContent = '空格';
+      });
+
+      const text = formatMathSpeech(clone.innerText || clone.textContent);
+
+      if (!text.trim()) return;
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-TW';
+      utter.rate = currentTtsSpeed;
+
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+      if (zhVoice) utter.voice = zhVoice;
+
+      currentSpeakingEl = el;
+      el.classList.add('speaking');
+      const pBtn = el.querySelector('.tts-play-btn');
+      if (pBtn) pBtn.classList.add('playing');
+
+      utter.onend = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      utter.onerror = () => {
+        el.classList.remove('speaking');
+        if (pBtn) pBtn.classList.remove('playing');
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
+    // 2. 逐題逐步點擊顯現解答（一個等號算一步驟，點擊依序揭曉）
+    function toggleItemAnswer(el) {
+      if (isPenMode) return; // 畫筆模式時不觸發答案點擊
+      
+      const steps = el.querySelectorAll('.calc-step');
+      if (steps.length === 0) {
+        el.classList.toggle('ans-done');
+        return;
+      }
+      
+      // 計算目前已經揭曉的步驟數
+      const shownSteps = el.querySelectorAll('.calc-step.show').length;
+      
+      if (shownSteps < steps.length) {
+        // 揭曉下一步驟（下一個等號）
+        steps[shownSteps].classList.add('show');
+        if (shownSteps + 1 === steps.length) {
+          // 最後一步驟已出爐，同時揭曉題幹上的答案框
+          el.classList.add('ans-done');
+        }
+      } else {
+        // 所有步驟皆已揭曉，再次點擊則隱藏重置
+        steps.forEach(s => s.classList.remove('show'));
+        el.classList.remove('ans-done');
+      }
+    }
+
+    // 3. 一鍵全開 / 全隱答案
+    function toggleAllAnswers() {
+      isAllAnsShown = !isAllAnsShown;
+      const btn = document.getElementById('toggleAllAnsBtn');
+      const icon = document.getElementById('ansIcon');
+      const container = document.querySelector('.pages-container');
+      
+      if (isAllAnsShown) {
+        container.classList.add('show-ans');
+        btn.classList.add('active');
+        icon.textContent = '🙈';
+        document.querySelectorAll('.calc-step').forEach(s => s.classList.add('show'));
+      } else {
+        container.classList.remove('show-ans');
+        btn.classList.remove('active');
+        icon.textContent = '👁️';
+        document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('show'));
+        document.querySelectorAll('.interactive-item').forEach(el => el.classList.remove('ans-done'));
+      }
+    }
+
+    // 4. 畫筆切換
+    function togglePenMode() {
+      isPenMode = !isPenMode;
+      const penBtn = document.getElementById('penBtn');
+      const options = document.getElementById('penOptions');
+      
+      if (isPenMode) {
+        penBtn.classList.add('active');
+        options.style.display = 'inline-flex';
+        document.body.classList.add('pen-mode');
+        stopTts();
+      } else {
+        penBtn.classList.remove('active');
+        options.style.display = 'none';
+        document.body.classList.remove('pen-mode');
+      }
+    }
+
+    // 5. 設定顏色與粗細
+    function setPenColor(color, el) {
+      currentColor = color;
+      document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function setPenSize(size, btnEl) {
+      currentSize = size;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    // 6. 初始化每頁畫布
+    function initCanvases() {
+      const pageElements = document.querySelectorAll('.page');
+      pageElements.forEach(page => {
+        const canvas = page.querySelector('.drawing-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        function resize() {
+          const rect = page.getBoundingClientRect();
+          const scale = window.devicePixelRatio || 1;
+          canvas.width = rect.width * scale;
+          canvas.height = rect.height * scale;
+          ctx.scale(scale, scale);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function getPos(e) {
+          const rect = canvas.getBoundingClientRect();
+          if (e.touches && e.touches.length > 0) {
+            return {
+              x: e.touches[0].clientX - rect.left,
+              y: e.touches[0].clientY - rect.top
+            };
+          }
+          return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        }
+
+        function startDraw(e) {
+          if (!isPenMode) return;
+          isDrawing = true;
+          const pos = getPos(e);
+          lastX = pos.x;
+          lastY = pos.y;
+        }
+
+        function draw(e) {
+          if (!isDrawing || !isPenMode) return;
+          const pos = getPos(e);
+          ctx.beginPath();
+          ctx.moveTo(lastX, lastY);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.strokeStyle = currentColor;
+          ctx.lineWidth = currentSize;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.stroke();
+          lastX = pos.x;
+          lastY = pos.y;
+          e.preventDefault();
+        }
+
+        function stopDraw() {
+          isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDraw);
+
+        canvas.addEventListener('touchstart', startDraw, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        window.addEventListener('touchend', stopDraw);
+
+        canvases.push({ canvas, ctx });
+      });
+    }
+
+    // 7. 清除所有畫跡
+    function clearAllDrawings() {
+      canvases.forEach(({ canvas, ctx }) => {
+        const scale = window.devicePixelRatio || 1;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initCanvases();
+    });
+  </script>
+</body>
+</html>
