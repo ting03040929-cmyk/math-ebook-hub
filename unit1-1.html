@@ -332,6 +332,10 @@
       pointer-events: auto;
       cursor: crosshair;
     }
+    body.eraser-mode .drawing-canvas {
+      pointer-events: auto;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="%23dc2626" stroke-width="2"/><line x1="7" y1="7" x2="17" y2="17" stroke="%23dc2626" stroke-width="1.5"/></svg>') 12 12, cell;
+    }
 
     /* 頁首與頁尾 */
     .header-bar {
@@ -769,6 +773,11 @@
         <button class="size-btn" onclick="setPenSize(16, this)">粗</button>
       </div>
     </div>
+
+    <!-- 橡皮擦切換按鈕 -->
+    <button class="tool-btn" id="eraserBtn" onclick="toggleEraserMode()" title="橡皮擦（局部擦拭畫跡）">
+      🧼
+    </button>
 
     <!-- 清除畫跡 -->
     <button class="tool-btn" onclick="clearAllDrawings()" title="清除本頁/全卷畫筆">
@@ -1369,13 +1378,119 @@
   <script>
     let isAllAnsShown = false;
     let isPenMode = false;
+    let isEraserMode = false;
     let currentColor = 'rgba(250, 204, 21, 0.45)'; // 螢光黃
     let currentSize = 3;
+    let eraserSize = 26;
     const canvases = [];
 
-    // 語音朗讀狀態
+    // 語音朗讀狀態與跨瀏覽器音訊強化
     let currentTtsSpeed = 0.9;
     let currentSpeakingEl = null;
+    const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+    let isAudioUnlocked = false;
+    let activeUtterance = null; // 全域持有以防止 Chrome V8 垃圾回收中斷朗讀
+    let voices = [];
+    let selectedVoice = null;
+
+    function isChineseVoice(v) {
+      if (!v) return false;
+      const l = (v.lang || '').toLowerCase().replace(/_/g, '-');
+      return l.startsWith('zh') || l.includes('cmn') || l.includes('chinese') || l.includes('taiwan') || l.includes('mandarin');
+    }
+
+    function populateVoiceList() {
+      if (!synth) return;
+      const allVoices = synth.getVoices();
+      let zhVoices = allVoices.filter(isChineseVoice);
+      if (zhVoices.length === 0 && allVoices.length > 0) {
+        zhVoices = allVoices;
+      }
+
+      if (zhVoices.length > 0) {
+        voices = zhVoices;
+        let idx = voices.findIndex(v => v.name.includes('HsiaoChen') || v.name.includes('YunJhe') || v.name.includes('Natural'));
+        if (idx === -1) idx = voices.findIndex(v => (v.name.includes('Yating') || v.name.includes('Mei-Jia') || v.name.includes('Sin-ji') || v.name.includes('Ting-Ting') || v.name.includes('Li-mu')) && (v.lang || '').includes('TW'));
+        if (idx === -1) idx = voices.findIndex(v => v.name.includes('國語') || (v.lang || '').toLowerCase().includes('tw'));
+        if (idx === -1) idx = voices.findIndex(v => (v.lang || '').toLowerCase().includes('zh-tw'));
+        if (idx === -1) idx = 0;
+        selectedVoice = voices[idx] || null;
+      }
+    }
+
+    function unlockMobileAudio() {
+      if (isAudioUnlocked) return;
+      if (synth) {
+        try {
+          synth.resume();
+          const silent = new SpeechSynthesisUtterance(' ');
+          silent.volume = 0.01;
+          synth.speak(silent);
+        } catch (e) {}
+        populateVoiceList();
+      }
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          ctx.resume().then(() => ctx.close());
+        }
+      } catch (e) {}
+      isAudioUnlocked = true;
+    }
+
+    // 在任意首次觸摸/點擊時解除行動瀏覽器音訊靜音限制
+    window.addEventListener('touchstart', unlockMobileAudio, { once: true, passive: true });
+    window.addEventListener('touchend', unlockMobileAudio, { once: true, passive: true });
+    window.addEventListener('click', unlockMobileAudio, { once: true, passive: true });
+
+    let voiceCheckTimer = setInterval(() => {
+      if (synth && synth.getVoices().length > 0) {
+        populateVoiceList();
+        clearInterval(voiceCheckTimer);
+      }
+    }, 250);
+    setTimeout(() => clearInterval(voiceCheckTimer), 4000);
+
+    if (synth && synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = populateVoiceList;
+    }
+
+    function safeSpeak(utteranceObj, onEndCallback) {
+      if (!synth) {
+        if (onEndCallback) onEndCallback();
+        return;
+      }
+      try { synth.resume(); } catch (e) {}
+      try { synth.cancel(); } catch (e) {}
+
+      activeUtterance = utteranceObj; // 防止 Chrome 記憶體回收
+
+      let hasEnded = false;
+      const finish = () => {
+        if (hasEnded) return;
+        hasEnded = true;
+        activeUtterance = null;
+        if (onEndCallback) onEndCallback();
+      };
+
+      utteranceObj.onend = finish;
+      utteranceObj.onerror = (err) => {
+        console.warn('Speech error/canceled:', err);
+        finish();
+      };
+
+      // 50ms 延遲避開 WebKit / Chrome 在 cancel() 後立即 speak() 被取消的 bug
+      setTimeout(() => {
+        try {
+          synth.resume();
+          synth.speak(utteranceObj);
+        } catch (err) {
+          console.error('synth.speak execution error:', err);
+          finish();
+        }
+      }, 50);
+    }
 
     // 0. 目錄切換與跳轉
     function toggleTocMenu(e) {
@@ -1421,14 +1536,14 @@
       currentTtsSpeed = speed;
       document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
-      if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+      if (synth && synth.speaking) {
         stopTts();
       }
     }
 
     function stopTts() {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+      if (synth) {
+        try { synth.cancel(); } catch (e) {}
       }
       if (currentSpeakingEl) {
         currentSpeakingEl.classList.remove('speaking');
@@ -1469,13 +1584,14 @@
 
     function speakElement(el, e) {
       if (e) e.stopPropagation();
-      if (!('speechSynthesis' in window)) {
-        alert('您的瀏覽器不支援語音合成（Web Speech API）。建議使用 Chrome 或 Edge 瀏覽器！');
+      if (!synth) {
+        alert('您的瀏覽器不支援語音合成（Web Speech API）。');
         return;
       }
+      unlockMobileAudio();
 
       // 如果已在朗讀當前元素，點擊則停止
-      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
+      if (currentSpeakingEl === el && synth.speaking) {
         stopTts();
         return;
       }
@@ -1487,51 +1603,38 @@
       clone.querySelectorAll('.tts-play-btn, .drawing-canvas, script').forEach(n => n.remove());
 
       // 【核心規範：答案絕對不能唸出來！】
-      // 將所有答案填空區替換為「空格」，嚴防學生未作答先聽出答案
       clone.querySelectorAll('.ans-reveal').forEach(n => {
         n.textContent = '空格';
       });
 
       const text = formatMathSpeech(clone.innerText || clone.textContent);
-
       if (!text.trim()) return;
 
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'zh-TW';
       utter.rate = currentTtsSpeed;
-
-      // 尋找繁體中文語音
-      const voices = window.speechSynthesis.getVoices();
-      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
-      if (zhVoice) utter.voice = zhVoice;
+      if (selectedVoice) utter.voice = selectedVoice;
 
       currentSpeakingEl = el;
       el.classList.add('speaking');
       const pBtn = el.querySelector('.tts-play-btn');
       if (pBtn) pBtn.classList.add('playing');
 
-      utter.onend = () => {
+      safeSpeak(utter, () => {
         el.classList.remove('speaking');
         if (pBtn) pBtn.classList.remove('playing');
         if (currentSpeakingEl === el) currentSpeakingEl = null;
-      };
-
-      utter.onerror = () => {
-        el.classList.remove('speaking');
-        if (pBtn) pBtn.classList.remove('playing');
-        if (currentSpeakingEl === el) currentSpeakingEl = null;
-      };
-
-      window.speechSynthesis.speak(utter);
+      });
     }
 
     // 連連看專用朗讀（僅讀題目與選項，絕對不洩漏連線解答）
     function speakMatching(e) {
       if (e) e.stopPropagation();
-      if (!('speechSynthesis' in window)) return;
+      if (!synth) return;
+      unlockMobileAudio();
       
       const el = document.getElementById('matchArea');
-      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
+      if (currentSpeakingEl === el && synth.speaking) {
         stopTts();
         return;
       }
@@ -1542,40 +1645,23 @@
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'zh-TW';
       utter.rate = currentTtsSpeed;
-
-      const voices = window.speechSynthesis.getVoices();
-      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
-      if (zhVoice) utter.voice = zhVoice;
+      if (selectedVoice) utter.voice = selectedVoice;
 
       currentSpeakingEl = el;
       el.classList.add('speaking');
       const pBtn = document.querySelector('#page-3 .tts-play-btn');
       if (pBtn) pBtn.classList.add('playing');
 
-      utter.onend = () => {
+      safeSpeak(utter, () => {
         el.classList.remove('speaking');
         if (pBtn) pBtn.classList.remove('playing');
         if (currentSpeakingEl === el) currentSpeakingEl = null;
-      };
-      utter.onerror = () => {
-        el.classList.remove('speaking');
-        if (pBtn) pBtn.classList.remove('playing');
-        if (currentSpeakingEl === el) currentSpeakingEl = null;
-      };
-
-      window.speechSynthesis.speak(utter);
-    }
-
-    // 確保語音列表非同步載入
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
+      });
     }
 
     // 2. 逐題點擊顯現解答
     function toggleItemAnswer(el) {
-      if (isPenMode) return; // 畫筆模式時不觸發答案
+      if (isPenMode) return; // 畫筆/橡皮擦模式時不觸發答案
       el.classList.toggle('show-one');
     }
 
@@ -1598,21 +1684,50 @@
       }
     }
 
-    // 4. 畫筆切換
+    // 4. 畫筆與橡皮擦切換機制
     function togglePenMode() {
-      isPenMode = !isPenMode;
+      if (isEraserMode) {
+        isEraserMode = false;
+        isPenMode = true;
+      } else {
+        isPenMode = !isPenMode;
+      }
+      updateDrawingToolState();
+    }
+
+    function toggleEraserMode() {
+      if (!isEraserMode) {
+        isEraserMode = true;
+        isPenMode = true;
+      } else {
+        isEraserMode = false;
+        isPenMode = false;
+      }
+      updateDrawingToolState();
+    }
+
+    function updateDrawingToolState() {
       const penBtn = document.getElementById('penBtn');
+      const eraserBtn = document.getElementById('eraserBtn');
       const options = document.getElementById('penOptions');
       
-      if (isPenMode) {
-        penBtn.classList.add('active');
-        options.style.display = 'inline-flex';
-        document.body.classList.add('pen-mode');
-        stopTts();
+      if (!isPenMode) {
+        isEraserMode = false;
+        if (penBtn) penBtn.classList.remove('active');
+        if (eraserBtn) eraserBtn.classList.remove('active');
+        if (options) options.style.display = 'none';
+        document.body.classList.remove('pen-mode', 'eraser-mode');
+      } else if (isEraserMode) {
+        if (penBtn) penBtn.classList.remove('active');
+        if (eraserBtn) eraserBtn.classList.add('active');
+        if (options) options.style.display = 'none';
+        document.body.classList.add('pen-mode', 'eraser-mode');
       } else {
-        penBtn.classList.remove('active');
-        options.style.display = 'none';
-        document.body.classList.remove('pen-mode');
+        if (penBtn) penBtn.classList.add('active');
+        if (eraserBtn) eraserBtn.classList.remove('active');
+        if (options) options.style.display = 'inline-flex';
+        document.body.classList.add('pen-mode');
+        document.body.classList.remove('eraser-mode');
       }
     }
 
@@ -1621,15 +1736,23 @@
       currentColor = color;
       document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
       el.classList.add('active');
+      if (isEraserMode) {
+        isEraserMode = false;
+        updateDrawingToolState();
+      }
     }
 
     function setPenSize(size, btnEl) {
       currentSize = size;
       document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
       btnEl.classList.add('active');
+      if (isEraserMode) {
+        isEraserMode = false;
+        updateDrawingToolState();
+      }
     }
 
-    // 6. 初始化每頁畫布
+    // 6. 初始化每頁透明畫布
     function initCanvases() {
       const pageElements = document.querySelectorAll('.page');
       pageElements.forEach(page => {
@@ -1671,19 +1794,44 @@
           const pos = getPos(e);
           lastX = pos.x;
           lastY = pos.y;
+
+          ctx.save();
+          if (isEraserMode) {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(lastX, lastY, eraserSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.beginPath();
+            ctx.arc(lastX, lastY, currentSize / 2, 0, Math.PI * 2);
+            ctx.fillStyle = currentColor;
+            ctx.fill();
+          }
+          ctx.restore();
         }
 
         function draw(e) {
           if (!isDrawing || !isPenMode) return;
           const pos = getPos(e);
+          ctx.save();
+          if (isEraserMode) {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = eraserSize;
+            ctx.strokeStyle = 'rgba(0,0,0,1)';
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.lineWidth = currentSize;
+            ctx.strokeStyle = currentColor;
+          }
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
           ctx.beginPath();
           ctx.moveTo(lastX, lastY);
           ctx.lineTo(pos.x, pos.y);
-          ctx.strokeStyle = currentColor;
-          ctx.lineWidth = currentSize;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
           ctx.stroke();
+          ctx.restore();
+
           lastX = pos.x;
           lastY = pos.y;
           e.preventDefault();

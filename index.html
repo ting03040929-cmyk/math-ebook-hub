@@ -3,349 +3,883 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>國中特教數學 自製電子書教材庫 (Math Ebook Hub)</title>
+  <title>國中特教數學 教材總入口 (Math Portal)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --voice-color: #0d9488;
+      --voice-hover: #0f766e;
+      --voice-light: #ccfbf1;
+      --interactive-color: #2563eb;
+      --interactive-hover: #1d4ed8;
+      --interactive-light: #dbeafe;
+      --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #cbd5e1;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang TC", "Microsoft JhengHei", "標楷體", sans-serif;
-      background: linear-gradient(135deg, #f0f7fc 0%, #e0f2fe 100%);
-      color: #1e293b;
+      font-family: "LXGW WenKai TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
+
+    /* 頂部快速切換條 */
+    .utility-bar {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 8px 24px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .utility-bar a {
+      color: #e2e8f0;
+      text-decoration: none;
+      font-weight: bold;
+      background: rgba(255,255,255,0.12);
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .utility-bar a:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* 首頁 Header */
     header {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid #cbd5e1;
+      border-bottom: 2px solid #bae6fd;
       padding: 24px 20px 20px 20px;
       text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);
       position: sticky;
       top: 0;
       z-index: 100;
     }
     .header-content {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
     }
     .header-tag {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: #e0f2fe;
       color: #0369a1;
-      font-size: 13px;
-      font-weight: bold;
-      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 4px 16px;
       border-radius: 20px;
-      margin-bottom: 10px;
-      border: 1px solid #bae6fd;
+      margin-bottom: 12px;
+      border: 1px solid #7dd3fc;
     }
     h1 {
-      font-size: 26px;
-      color: #0f4c81;
+      font-size: 28px;
+      color: #0c4a6e;
       margin-bottom: 8px;
       letter-spacing: 0.5px;
+      font-weight: 800;
     }
     .subtitle {
-      font-size: 15px;
-      color: #64748b;
-      max-width: 650px;
+      font-size: 16px;
+      color: #334155;
+      max-width: 800px;
       margin: 0 auto 16px auto;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .features-bar {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 6px;
     }
     .feat-chip {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      padding: 5px 12px;
+      border: 1px solid #cbd5e1;
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 13px;
-      color: #334155;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      font-size: 13.5px;
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      font-weight: bold;
     }
 
     /* 主體容器 */
     main {
       flex: 1;
-      max-width: 1100px;
-      margin: 30px auto;
+      max-width: 1200px;
+      margin: 25px auto 40px auto;
       padding: 0 20px;
       width: 100%;
     }
 
-    .section-title {
-      font-size: 20px;
-      color: #0f172a;
-      margin-bottom: 18px;
+    /* 控制面板：章節篩選與搜尋 */
+    .controls-panel {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 18px 24px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      border: 1px solid #e2e8f0;
       display: flex;
+      justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .chapter-filters {
+      display: flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
-    .section-title::before {
-      content: "";
-      display: inline-block;
-      width: 5px;
-      height: 20px;
-      background: #0284c7;
-      border-radius: 3px;
+    .filter-btn {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 9px 16px 9px 38px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
     }
 
-    /* 教材卡片網格 */
+    /* 卡片網格 */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 22px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
     }
-    .lesson-card {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-      overflow: hidden;
+
+    .unit-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       position: relative;
     }
-    .lesson-card:hover {
+    .unit-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12);
+      box-shadow: 0 12px 28px rgba(2, 132, 199, 0.12);
       border-color: #7dd3fc;
     }
-    .card-banner {
-      height: 8px;
-      background: linear-gradient(90deg, #0284c7, #38bdf8);
+
+    .card-top-strip {
+      height: 7px;
+      background: linear-gradient(90deg, var(--voice-color), var(--interactive-color));
     }
-    .card-banner.upcoming {
-      background: linear-gradient(90deg, #94a3b8, #cbd5e1);
+    .card-top-strip.partial {
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
     }
-    .card-body {
-      padding: 20px;
-      flex: 1;
+    .card-top-strip.waiting {
+      background: #cbd5e1;
+    }
+
+    .card-content {
+      padding: 22px;
       display: flex;
       flex-direction: column;
+      flex: 1;
     }
-    .card-top {
+
+    .card-header-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
     }
-    .badge-grade {
-      background: #eff6ff;
-      color: #0284c7;
+    .unit-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid #bae6fd;
+    }
+    .status-badge {
       font-size: 12px;
       font-weight: bold;
-      padding: 3px 9px;
-      border-radius: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
     }
-    .badge-status {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-weight: bold;
-    }
-    .badge-status.active {
+    .status-badge.both {
       background: #dcfce7;
       color: #15803d;
     }
-    .badge-status.waiting {
+    .status-badge.partial {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .status-badge.waiting {
       background: #f1f5f9;
       color: #64748b;
     }
-    .lesson-title {
-      font-size: 18px;
-      font-weight: bold;
+
+    .unit-title {
+      font-size: 20px;
+      font-weight: 800;
       color: #0f172a;
+      line-height: 1.45;
       margin-bottom: 10px;
-      line-height: 1.4;
     }
-    .lesson-desc {
-      font-size: 14px;
-      color: #64748b;
-      line-height: 1.55;
+
+    .unit-desc {
+      font-size: 14.5px;
+      color: #475569;
+      line-height: 1.6;
       margin-bottom: 16px;
       flex: 1;
     }
-    .tag-group {
+
+    .tag-container {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
-    .tag-item {
+    .tag-pill {
       font-size: 12px;
       background: #f8fafc;
       color: #475569;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
       border: 1px solid #e2e8f0;
+      font-weight: 500;
     }
-    .btn-enter {
-      display: block;
-      width: 100%;
-      text-align: center;
-      background: #0284c7;
-      color: #ffffff;
-      padding: 11px 16px;
-      border-radius: 10px;
+
+    /* 雙大按鈕區域（特教核心） */
+    .action-buttons-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .btn-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      font-size: 16.5px;
+      font-weight: 800;
       text-decoration: none;
-      font-size: 15px;
-      font-weight: bold;
-      transition: background 0.15s, transform 0.1s;
+      color: #ffffff;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+      min-height: 52px; /* 適合特教生觸控點擊 */
+      border: none;
+      cursor: pointer;
     }
-    .btn-enter:hover {
-      background: #0369a1;
-      transform: scale(1.02);
+    .btn-action:active {
+      transform: scale(0.98);
     }
-    .btn-enter.disabled {
-      background: #e2e8f0;
-      color: #94a3b8;
-      cursor: not-allowed;
+
+    /* 按鈕 1：語音教材 */
+    .btn-voice {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+    }
+    .btn-voice:hover {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
+    }
+
+    /* 按鈕 2：互動練習 */
+    .btn-interactive {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+    .btn-interactive:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+
+    /* 停用按鈕 */
+    .btn-disabled {
+      background: #f1f5f9 !important;
+      color: #94a3b8 !important;
+      border: 1px dashed #cbd5e1 !important;
+      box-shadow: none !important;
+      cursor: not-allowed !important;
       pointer-events: none;
+      font-weight: normal;
+    }
+
+    /* QR Code 小按鈕 */
+    .btn-qr {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      width: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-qr:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* QR Code 彈窗 Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 420px;
+      padding: 26px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      position: relative;
+    }
+    .modal-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .modal-subtitle {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-bottom: 18px;
+    }
+    .qrcode-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      min-height: 220px;
+    }
+    .qrcode-display img {
+      margin: 0 auto;
+      border-radius: 6px;
+    }
+    .url-copy-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .url-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #f8fafc;
+      color: #334155;
+    }
+    .btn-copy {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: #94a3b8;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .btn-modal-close:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    /* 空狀態 */
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 2px dashed #cbd5e1;
+      color: #64748b;
+    }
+    .empty-message h3 {
+      font-size: 19px;
+      color: #1e293b;
+      margin-bottom: 8px;
     }
 
     /* 頁尾 */
     footer {
       background: #ffffff;
       border-top: 1px solid #e2e8f0;
-      padding: 20px;
+      padding: 24px 20px;
       text-align: center;
-      font-size: 13px;
+      font-size: 14px;
       color: #64748b;
       margin-top: auto;
+      line-height: 1.6;
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
+  <!-- 頂部快速切換條 -->
+  <div class="utility-bar">
+    <div>
+      <span>🎯 國中特教數學 教學平台</span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a href="ebooks.html" title="切換至僅顯示電子書模式">📖 純電子書模式</a>
+      <a href="https://ting03040929-cmyk.github.io/voice-reading-hub/index.html" target="_blank" title="前往語音報讀專案">🔊 語音報讀中心</a>
+    </div>
+  </div>
+
   <header>
     <div class="header-content">
-      <div class="header-tag">特教教學 ‧ 雙模式互動教材庫</div>
-      <h1>📖 國中特教數學 自製電子書學習網</h1>
+      <div class="header-tag">✨ 特教友善 ‧ 一鍵直達雙模式教材</div>
+      <h1>國中特教數學 教材總入口</h1>
       <p class="subtitle">
-        專為國中特教資源班與個別化教學打造：支援大屏逐題示範、板書畫筆、語音點讀報讀（答案保密）、以及純淨白紙 A4 無溢頁列印。
+        一個網址涵蓋特教全功能：題目識字輔助請點「🔊 語音教材」搭配紙本；課堂投影示範與學生反覆操作請點「🎮 互動練習」。
       </p>
       <div class="features-bar">
-        <span class="feat-chip">🖥️ 觸控大屏逐題點解</span>
         <span class="feat-chip">🔊 語音報讀（答案保密）</span>
-        <span class="feat-chip">✏️ 多色板書畫筆</span>
-        <span class="feat-chip">🖨️ A4 白紙列印（零干擾）</span>
-        <span class="feat-chip">📱 平板掃碼即用</span>
+        <span class="feat-chip">🎮 AI 互動電子書（步驟鷹架）</span>
+        <span class="feat-chip">📱 平板一鍵 QR Code 掃碼</span>
+        <span class="feat-chip">🧩 特教學障友善大字體</span>
       </div>
     </div>
   </header>
 
   <main>
-    <div class="section-title">七年級數學單元教材（陸續擴充中）</div>
-
-    <div class="cards-grid">
-
-      <!-- 單元 1-1：正數與負數 -->
-      <div class="lesson-card">
-        <div class="card-banner"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="badge-grade">七上 ‧ 第一單元</span>
-            <span class="badge-status active">● 已上架開放</span>
-          </div>
-          <div class="lesson-title">1-1 正數與負數（生活相反量、基準點與數線位置）</div>
-          <div class="lesson-desc">
-            全套 5 頁五階段特教闖關電子書：正負數概念圖、相反量百寶箱、SVG 動態連連看、數線三要素找點、以及段考與體重生活基準量題組。
-          </div>
-          <div class="tag-group">
-            <span class="tag-item">🔊 語音報讀</span>
-            <span class="tag-item">🧩 SVG 連連看</span>
-            <span class="tag-item">🖨️ A4 5頁不溢頁</span>
-            <span class="tag-item">🏆 過關認證章</span>
-          </div>
-          <a href="unit1-1.html" class="btn-enter">🚀 開啟電子書教材</a>
-        </div>
+    <!-- 控制面板：章節篩選與即時搜尋 -->
+    <div class="controls-panel">
+      <div class="chapter-filters" id="chapter-filters">
+        <button class="filter-btn active" data-chapter="all">全部單元</button>
+        <button class="filter-btn" data-chapter="第一章 數與數線">第一章 數與數線</button>
+        <button class="filter-btn" data-chapter="第二章 分數的運算">第二章 分數的運算</button>
       </div>
 
-      <!-- 單元 1-2：正負數的加減運算與數線距離 -->
-      <div class="lesson-card">
-        <div class="card-banner"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="badge-grade">七上 ‧ 第一單元</span>
-            <span class="badge-status active">● 已上架開放</span>
-          </div>
-          <div class="lesson-title">1-2 正負數的加減運算與數線距離（特教鷹架漸進版）</div>
-          <div class="lesson-desc">
-            全套 5 頁特教關卡：大減小與小減大、同號負負相加、異號正負抵消、負負得正、數線兩點距離與認證章。每關皆有彩色圖示觀念卡、題目數字清晰直觀、計算框 4 階適性褪除鷹架（第1題示範黑字預填、第2~3題逐步挖空、第4題留白手寫實戰）。
-          </div>
-          <div class="tag-group">
-            <span class="tag-item">🪜 4階適性褪除鷹架</span>
-            <span class="tag-item">💡 彩色圖示觀念卡</span>
-            <span class="tag-item">🔊 語音報讀（答案保密）</span>
-            <span class="tag-item">🖨️ A4 5頁獨立不溢頁</span>
-          </div>
-          <a href="unit1-2.html" class="btn-enter">🚀 開啟電子書教材</a>
-        </div>
+      <div class="search-box">
+        <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="搜尋單元名稱或概念標籤...">
       </div>
+    </div>
 
-      <!-- 單元 1-3：正負數的乘除（預留卡片） -->
-      <div class="lesson-card">
-        <div class="card-banner upcoming"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="badge-grade">七上 ‧ 第一單元</span>
-            <span class="badge-status waiting">⏳ 籌備建置中</span>
-          </div>
-          <div class="lesson-title">1-3 正負數的乘除與四則運算</div>
-          <div class="lesson-desc">
-            正正得正、負負得正、先乘除後加減口訣卡、運算規則拆解與生活素養綜合演練。
-          </div>
-          <div class="tag-group">
-            <span class="tag-item">乘除規則</span>
-            <span class="tag-item">四則混合</span>
-            <span class="tag-item">雙模式講義</span>
-          </div>
-          <a href="#" class="btn-enter disabled">教材整理中</a>
-        </div>
-      </div>
-
-      <!-- 單元 2-1：因數與倍數（預留卡片） -->
-      <div class="lesson-card">
-        <div class="card-banner upcoming"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="badge-grade">七上 ‧ 第二單元</span>
-            <span class="badge-status waiting">⏳ 籌備建置中</span>
-          </div>
-          <div class="lesson-title">2-1 因數與倍數（質數、合數與公因數）</div>
-          <div class="lesson-desc">
-            結構化倍數判定法（2、3、5、11的倍數）、質因數分解直式短除法與生活實用題組。
-          </div>
-          <div class="tag-group">
-            <span class="tag-item">倍數判定</span>
-            <span class="tag-item">短除法鷹架</span>
-            <span class="tag-item">特教學障友善</span>
-          </div>
-          <a href="#" class="btn-enter disabled">教材整理中</a>
-        </div>
-      </div>
-
+    <!-- 教材單元卡片網格 -->
+    <div class="cards-grid" id="cards-container">
+      <!-- 由 JavaScript 動態依 data/units.js 渲染 -->
     </div>
   </main>
 
+  <!-- 平板 QR Code 投影彈窗 -->
+  <div class="modal-backdrop" id="qr-modal">
+    <div class="modal-box">
+      <button class="btn-modal-close" id="btn-close-modal">×</button>
+      <div class="modal-title" id="modal-title">單元 QR Code</div>
+      <div class="modal-subtitle" id="modal-subtitle">請學生使用平板相機掃描，即可直達本教材</div>
+      <div class="qrcode-display" id="qrcode-box"></div>
+      <div class="url-copy-box">
+        <input type="text" class="url-input" id="modal-url-input" readonly>
+        <button class="btn-copy" id="btn-copy-url">複製網址</button>
+      </div>
+    </div>
+  </div>
+
   <footer>
-    國中特教數學 雙模式自製電子書學習網 ‧ 謝惠婷老師編製 ‧ 支援 Chrome / Edge / iPad / 觸控大屏
+    國中特教數學 教材總入口 ‧ 謝惠婷老師編製 ‧ 整合「語音報讀中心」與「AI 互動電子書庫」<br>
+    支援 Chrome / Edge / iPad 平板教學 / 觸控大螢幕
   </footer>
 
+  <!-- 載入教材資料庫 -->
+  <script src="data/units.js"></script>
+
+  <script>
+    // 預設資料來源 fallback
+    const fallbackUnits = [
+      {
+        id: "unit-1-1",
+        chapter: "第一章 數與數線",
+        unitNumber: "1-1",
+        title: "正數與負數（生活相反量、基準點與數線位置）",
+        grade: "七年級上學期",
+        desc: "全套 5 頁特教闖關：正負數概念圖、相反量百寶箱、SVG 動態連連看、數線三要素找點、以及段考與體重生活基準量題組。",
+        tags: ["正負數", "數線", "相反量", "基準點", "特教五關"],
+        voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-g7-pos-neg.html",
+        ebookUrl: "unit1-1.html"
+      },
+      {
+        id: "unit-1-2",
+        chapter: "第一章 數與數線",
+        unitNumber: "1-2",
+        title: "正負數的加減運算與數線距離（特教鷹架漸進版）",
+        grade: "七年級上學期",
+        desc: "全套 5 頁特教關卡：大減小與小減大、同號負負相加、異號正負抵消、負負得正、數線兩點距離。4 階適性褪除鷹架，循序漸進解題。",
+        tags: ["正負數加減", "數線距離", "負負得正", "4階鷹架"],
+        voiceUrl: "",
+        ebookUrl: "unit1-2.html"
+      },
+      {
+        id: "quiz-1",
+        chapter: "第一章 數與數線",
+        unitNumber: "1-隨堂",
+        title: "正負數家族與相反量練習題組（生活情境題）",
+        grade: "七年級上學期",
+        desc: "「+」家族與「-」家族相反詞整理（賺錢/花錢、收入/支出、上升/下降、贏了/輸了、東/西）與 15 題生活情境正負數選擇題。",
+        tags: ["正負數", "相反量", "家族分類", "生活情境", "隨堂練習"],
+        voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-917-quiz.html",
+        ebookUrl: ""
+      },
+      {
+        id: "unit-1-3",
+        chapter: "第一章 數與數線",
+        unitNumber: "1-3",
+        title: "正負數的乘除與四則運算",
+        grade: "七年級上學期",
+        desc: "正正得正、負負得正、先乘除後加減口訣卡、運算規則拆解與生活素養綜合演練。",
+        tags: ["乘除規則", "四則混合", "口訣卡"],
+        voiceUrl: "",
+        ebookUrl: ""
+      },
+      {
+        id: "unit-2-1",
+        chapter: "第二章 分數的運算",
+        unitNumber: "2-1",
+        title: "因數與倍數（質數、合數與公因數）",
+        grade: "七年級上學期",
+        desc: "結構化倍數判定法（2、3、5、11的倍數）、質因數分解直式短除法與生活實用題組。",
+        tags: ["倍數判定", "質數合數", "短除法鷹架"],
+        voiceUrl: "",
+        ebookUrl: ""
+      }
+    ];
+
+    let unitsList = (window.MATH_UNITS && window.MATH_UNITS.length > 0) ? window.MATH_UNITS : fallbackUnits;
+
+    let activeChapter = 'all';
+    let searchQuery = '';
+
+    const container = document.getElementById('cards-container');
+    const searchInput = document.getElementById('search-input');
+    const chapterButtons = document.querySelectorAll('.chapter-filters .filter-btn');
+
+    const qrModal = document.getElementById('qr-modal');
+    const qrcodeBox = document.getElementById('qrcode-box');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSubtitle = document.getElementById('modal-subtitle');
+    const modalUrlInput = document.getElementById('modal-url-input');
+    const btnCopyUrl = document.getElementById('btn-copy-url');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
+    let qrcodeInstance = null;
+
+    // 渲染卡片
+    function renderCards() {
+      container.innerHTML = '';
+
+      const filtered = unitsList.filter(item => {
+        const matchChapter = activeChapter === 'all' || item.chapter === activeChapter;
+        const query = searchQuery.trim().toLowerCase();
+        const matchSearch = !query || 
+          item.title.toLowerCase().includes(query) ||
+          item.unitNumber.toLowerCase().includes(query) ||
+          item.desc.toLowerCase().includes(query) ||
+          (item.tags && item.tags.some(t => t.toLowerCase().includes(query)));
+        return matchChapter && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-message">
+            <h3>🔍 找不到相符的單元教材</h3>
+            <p>請嘗試切換章節標籤，或清除搜尋關鍵字。</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const hasVoice = Boolean(item.voiceUrl && item.voiceUrl.trim());
+        const hasEbook = Boolean(item.ebookUrl && item.ebookUrl.trim());
+
+        let stripClass = 'waiting';
+        let statusBadge = `<span class="status-badge waiting">⏳ 籌備建置中</span>`;
+
+        if (hasVoice && hasEbook) {
+          stripClass = '';
+          statusBadge = `<span class="status-badge both">● 雙模式已就緒</span>`;
+        } else if (hasVoice) {
+          stripClass = 'partial';
+          statusBadge = `<span class="status-badge partial">● 語音報讀已開放</span>`;
+        } else if (hasEbook) {
+          stripClass = 'partial';
+          statusBadge = `<span class="status-badge partial">● 互動電子書已開放</span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'unit-card';
+        card.innerHTML = `
+          <div class="card-top-strip ${stripClass}"></div>
+          <div class="card-content">
+            <div class="card-header-meta">
+              <span class="unit-badge">${item.grade || '七年級'} ‧ ${item.unitNumber}</span>
+              ${statusBadge}
+            </div>
+
+            <h2 class="unit-title">${item.title}</h2>
+            <p class="unit-desc">${item.desc}</p>
+
+            <div class="tag-container">
+              ${(item.tags || []).map(t => `<span class="tag-pill">#${t}</span>`).join('')}
+            </div>
+
+            <div class="action-buttons-group">
+              <!-- 按鈕 1：語音教材 -->
+              <div class="action-row">
+                ${hasVoice ? `
+                  <a href="${item.voiceUrl}" target="_blank" class="btn-action btn-voice">
+                    <span>🔊 語音教材（聽讀題目）</span>
+                  </a>
+                  <button class="btn-qr" title="產生平板掃碼 QR Code" onclick="openQrModal('🔊 ${item.unitNumber} 語音教材', '請使用平板掃碼聽讀題目', '${item.voiceUrl}')">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2h2v2H2V2Z"/><path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/><path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/><path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 3v-1h1v1h-1Zm-1-1h-1v2h-1v-1H9v1h1v1H9v1h1v-1h2v-1h-1v-2Zm1 3v-1h1v2h-2v-1h1Zm-8-1h1v1H7v-1Zm-2 0h1v2H5v-2Zm-1 1h-1v1H2v-1h1v-1h1v1Zm-2 1v1h1v-1H1Zm13-3h1v1h-1v-1Zm-3 3h1v1h-1v-1Z"/></svg>
+                  </button>
+                ` : `
+                  <button class="btn-action btn-disabled">
+                    <span>🔊 語音教材（建置中）</span>
+                  </button>
+                `}
+              </div>
+
+              <!-- 按鈕 2：互動練習 -->
+              <div class="action-row">
+                ${hasEbook ? `
+                  <a href="${item.ebookUrl}" class="btn-action btn-interactive">
+                    <span>🎮 互動練習（AI 電子書）</span>
+                  </a>
+                  <button class="btn-qr" title="產生平板掃碼 QR Code" onclick="openQrModal('🎮 ${item.unitNumber} 互動練習', '請使用平板掃碼進入互動電子書', '${item.ebookUrl}')">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2h2v2H2V2Z"/><path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/><path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/><path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 3v-1h1v1h-1Zm-1-1h-1v2h-1v-1H9v1h1v1H9v1h1v-1h2v-1h-1v-2Zm1 3v-1h1v2h-2v-1h1Zm-8-1h1v1H7v-1Zm-2 0h1v2H5v-2Zm-1 1h-1v1H2v-1h1v-1h1v1Zm-2 1v1h1v-1H1Zm13-3h1v1h-1v-1Zm-3 3h1v1h-1v-1Z"/></svg>
+                  </button>
+                ` : `
+                  <button class="btn-action btn-disabled">
+                    <span>🎮 互動練習（建置中）</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 章節篩選按鈕事件
+    chapterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        chapterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeChapter = btn.dataset.chapter;
+        renderCards();
+      });
+    });
+
+    // 搜尋輸入事件
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderCards();
+    });
+
+    // 平板 QR Code Modal
+    window.openQrModal = function(title, subtitle, targetUrl) {
+      modalTitle.textContent = title;
+      modalSubtitle.textContent = subtitle;
+
+      // 解析完整網址
+      const fullUrl = new URL(targetUrl, window.location.href).href;
+      modalUrlInput.value = fullUrl;
+
+      qrcodeBox.innerHTML = '';
+      qrcodeInstance = new QRCode(qrcodeBox, {
+        text: fullUrl,
+        width: 200,
+        height: 200,
+        colorDark: "#0369a1",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      qrModal.classList.add('active');
+    };
+
+    btnCloseModal.addEventListener('click', () => {
+      qrModal.classList.remove('active');
+    });
+
+    qrModal.addEventListener('click', (e) => {
+      if (e.target === qrModal) {
+        qrModal.classList.remove('active');
+      }
+    });
+
+    btnCopyUrl.addEventListener('click', () => {
+      modalUrlInput.select();
+      navigator.clipboard.writeText(modalUrlInput.value).then(() => {
+        const orig = btnCopyUrl.textContent;
+        btnCopyUrl.textContent = '已複製！';
+        btnCopyUrl.style.backgroundColor = '#15803d';
+        setTimeout(() => {
+          btnCopyUrl.textContent = orig;
+          btnCopyUrl.style.backgroundColor = '';
+        }, 2000);
+      });
+    });
+
+    // 初次渲染
+    renderCards();
+
+    // 自動與 Voice Reading Hub 動態比對最新上線之教材
+    async function syncRemoteVoiceMaterials() {
+      try {
+        const res = await fetch('https://ting03040929-cmyk.github.io/voice-reading-hub/data/materials.json', { cache: 'no-cache' });
+        if (res.ok) {
+          const remoteList = await res.json();
+          let hasUpdate = false;
+          remoteList.forEach(m => {
+            unitsList.forEach(u => {
+              if (!u.voiceUrl && m.file) {
+                const match1 = u.unitNumber && m.title.includes(u.unitNumber);
+                const match2 = m.tags && u.tags && u.tags.some(t => t.length > 2 && m.tags.includes(t));
+                if (match1 || match2) {
+                  u.voiceUrl = `https://ting03040929-cmyk.github.io/voice-reading-hub/${m.file}`;
+                  hasUpdate = true;
+                }
+              }
+            });
+          });
+          if (hasUpdate) {
+            renderCards();
+          }
+        }
+      } catch (e) {
+        // 離線或本機 file:// 瀏覽時優雅保留預設清單
+      }
+    }
+    syncRemoteVoiceMaterials();
+  </script>
 </body>
 </html>

@@ -1,0 +1,73 @@
+/**
+ * 國中特教數學教材總入口 - 單元教材資料庫
+ * 未來新增單元時，直接在此陣列加入一筆物件即可，首頁會自動動態渲染！
+ * 
+ * 欄位說明：
+ * - id: 唯一識別碼
+ * - chapter: 章節名稱（用於分頁/篩選標籤）
+ * - unitNumber: 單元編號（如 1-1, 1-2）
+ * - title: 單元全名
+ * - desc: 概念說明（適合特教生快速理解）
+ * - grade: 年級標籤（預設 七年級）
+ * - tags: 概念關鍵字標籤
+ * - voiceUrl: 語音報讀網址（若尚無則填空字串 ""）
+ * - ebookUrl: 互動電子書網址（若尚無則填空字串 ""）
+ */
+
+window.MATH_UNITS = [
+  {
+    id: "unit-1-1",
+    chapter: "第一章 數與數線",
+    unitNumber: "1-1",
+    title: "正數與負數（生活相反量、基準點與數線位置）",
+    grade: "七年級上學期",
+    desc: "全套 5 頁特教闖關：正負數概念圖、相反量百寶箱、SVG 動態連連看、數線三要素找點、以及段考與體重生活基準量題組。",
+    tags: ["正負數", "數線", "相反量", "基準點", "特教五關"],
+    voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-g7-pos-neg.html",
+    ebookUrl: "unit1-1.html"
+  },
+  {
+    id: "unit-1-2",
+    chapter: "第一章 數與數線",
+    unitNumber: "1-2",
+    title: "正負數的加減運算與數線距離（特教鷹架漸進版）",
+    grade: "七年級上學期",
+    desc: "全套 5 頁特教關卡：大減小與小減大、同號負負相加、異號正負抵消、負負得正、數線兩點距離。4 階適性褪除鷹架，循序漸進解題。",
+    tags: ["正負數加減", "數線距離", "負負得正", "4階鷹架"],
+    voiceUrl: "", // 語音建置中
+    ebookUrl: "unit1-2.html"
+  },
+  {
+    id: "quiz-1",
+    chapter: "第一章 數與數線",
+    unitNumber: "1-隨堂",
+    title: "正負數家族與相反量練習題組（生活情境題）",
+    grade: "七年級上學期",
+    desc: "「+」家族與「-」家族相反詞整理（賺錢/花錢、收入/支出、上升/下降、贏了/輸了、東/西）與 15 題生活情境正負數選擇題。",
+    tags: ["正負數", "相反量", "家族分類", "生活情境", "隨堂練習"],
+    voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-917-quiz.html",
+    ebookUrl: "" // 電子書練習建置中
+  },
+  {
+    id: "unit-1-3",
+    chapter: "第一章 數與數線",
+    unitNumber: "1-3",
+    title: "正負數的乘除與四則運算",
+    grade: "七年級上學期",
+    desc: "正正得正、負負得正、先乘除後加減口訣卡、運算規則拆解與生活素養綜合演練。",
+    tags: ["乘除規則", "四則混合", "口訣卡"],
+    voiceUrl: "",
+    ebookUrl: ""
+  },
+  {
+    id: "unit-2-1",
+    chapter: "第二章 分數的運算",
+    unitNumber: "2-1",
+    title: "因數與倍數（質數、合數與公因數）",
+    grade: "七年級上學期",
+    desc: "結構化倍數判定法（2、3、5、11的倍數）、質因數分解直式短除法與生活實用題組。",
+    tags: ["倍數判定", "質數合數", "短除法鷹架"],
+    voiceUrl: "",
+    ebookUrl: ""
+  }
+];
