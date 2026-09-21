@@ -738,8 +738,8 @@
 
     <!-- 語音設定小面板 -->
     <div class="tts-options" id="ttsOptions">
-      <button class="tts-speed-btn" onclick="setTtsSpeed(0.8, this)" title="慢速朗讀">0.8x</button>
-      <button class="tts-speed-btn active" onclick="setTtsSpeed(0.9, this)" title="特教推薦語速">0.9x</button>
+      <button class="tts-speed-btn active" onclick="setTtsSpeed(0.8, this)" title="特教推薦語速">0.8x</button>
+      <button class="tts-speed-btn" onclick="setTtsSpeed(0.9, this)" title="舒緩語速">0.9x</button>
       <button class="tts-speed-btn" onclick="setTtsSpeed(1.0, this)" title="正常語速">1.0x</button>
       <div class="sub-divider"></div>
       <button class="tool-btn" style="width:26px; height:26px; font-size:13px;" onclick="stopTts()" title="停止朗讀">
@@ -1380,7 +1380,7 @@
     const canvases = [];
 
     // 語音朗讀狀態
-    let currentTtsSpeed = 0.9;
+    let currentTtsSpeed = 0.8;
     let currentSpeakingEl = null;
 
     // 0. 目錄切換與跳轉
@@ -1541,7 +1541,11 @@
       // 優先級 1：使用預先生成的微軟真人 MP3 檔案（全手機/平板/LINE 100% 免設定直接出聲）
       if (audioSrc) {
         globalAudio.src = audioSrc;
-        globalAudio.playbackRate = currentTtsSpeed || 0.9;
+        globalAudio.defaultPlaybackRate = currentTtsSpeed || 0.8;
+        globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        globalAudio.onplay = () => {
+          globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        };
         globalAudio.onended = onEnd;
         globalAudio.onerror = () => {
           console.warn('MP3 load error, fallback to speech synthesis / online audio');
@@ -1572,7 +1576,7 @@
           window.speechSynthesis.cancel();
           const utter = new SpeechSynthesisUtterance(text);
           utter.lang = 'zh-TW';
-          utter.rate = currentTtsSpeed || 0.9;
+          utter.rate = currentTtsSpeed || 0.8;
           const voices = window.speechSynthesis.getVoices();
           const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
           if (zhVoice) utter.voice = zhVoice;
@@ -1601,7 +1605,11 @@
     function onlineTtsFallback(text, onEnd) {
       try {
         globalAudio.src = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-TW&client=tw-ob&q=' + encodeURIComponent(text);
-        globalAudio.playbackRate = currentTtsSpeed || 1.0;
+        globalAudio.defaultPlaybackRate = currentTtsSpeed || 0.8;
+        globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        globalAudio.onplay = () => {
+          globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        };
         globalAudio.onended = onEnd;
         globalAudio.onerror = () => { if (onEnd) onEnd(); };
         const p = globalAudio.play();
