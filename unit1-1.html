@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -1379,113 +1379,9 @@
     let eraserSize = 26;
     const canvases = [];
 
-    // 語音朗讀狀態與跨瀏覽器音訊強化
+    // 語音朗讀狀態
     let currentTtsSpeed = 0.9;
     let currentSpeakingEl = null;
-    const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-    let isAudioUnlocked = false;
-    let activeUtterance = null; // 全域持有以防止 Chrome V8 垃圾回收中斷朗讀
-    let voices = [];
-    let selectedVoice = null;
-
-    function isChineseVoice(v) {
-      if (!v) return false;
-      const l = (v.lang || '').toLowerCase().replace(/_/g, '-');
-      return l.startsWith('zh') || l.includes('cmn') || l.includes('chinese') || l.includes('taiwan') || l.includes('mandarin');
-    }
-
-    function populateVoiceList() {
-      if (!synth) return;
-      const allVoices = synth.getVoices();
-      let zhVoices = allVoices.filter(isChineseVoice);
-      if (zhVoices.length === 0 && allVoices.length > 0) {
-        zhVoices = allVoices;
-      }
-
-      if (zhVoices.length > 0) {
-        voices = zhVoices;
-        let idx = voices.findIndex(v => v.name.includes('HsiaoChen') || v.name.includes('YunJhe') || v.name.includes('Natural'));
-        if (idx === -1) idx = voices.findIndex(v => (v.name.includes('Yating') || v.name.includes('Mei-Jia') || v.name.includes('Sin-ji') || v.name.includes('Ting-Ting') || v.name.includes('Li-mu')) && (v.lang || '').includes('TW'));
-        if (idx === -1) idx = voices.findIndex(v => v.name.includes('國語') || (v.lang || '').toLowerCase().includes('tw'));
-        if (idx === -1) idx = voices.findIndex(v => (v.lang || '').toLowerCase().includes('zh-tw'));
-        if (idx === -1) idx = 0;
-        selectedVoice = voices[idx] || null;
-      }
-    }
-
-    function unlockMobileAudio() {
-      if (isAudioUnlocked) return;
-      if (synth) {
-        try {
-          synth.resume();
-          const silent = new SpeechSynthesisUtterance(' ');
-          silent.volume = 0.01;
-          synth.speak(silent);
-        } catch (e) {}
-        populateVoiceList();
-      }
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          const ctx = new AudioCtx();
-          ctx.resume().then(() => ctx.close());
-        }
-      } catch (e) {}
-      isAudioUnlocked = true;
-    }
-
-    // 在任意首次觸摸/點擊時解除行動瀏覽器音訊靜音限制
-    window.addEventListener('touchstart', unlockMobileAudio, { once: true, passive: true });
-    window.addEventListener('touchend', unlockMobileAudio, { once: true, passive: true });
-    window.addEventListener('click', unlockMobileAudio, { once: true, passive: true });
-
-    let voiceCheckTimer = setInterval(() => {
-      if (synth && synth.getVoices().length > 0) {
-        populateVoiceList();
-        clearInterval(voiceCheckTimer);
-      }
-    }, 250);
-    setTimeout(() => clearInterval(voiceCheckTimer), 4000);
-
-    if (synth && synth.onvoiceschanged !== undefined) {
-      synth.onvoiceschanged = populateVoiceList;
-    }
-
-    function safeSpeak(utteranceObj, onEndCallback) {
-      if (!synth) {
-        if (onEndCallback) onEndCallback();
-        return;
-      }
-      try { synth.resume(); } catch (e) {}
-      try { synth.cancel(); } catch (e) {}
-
-      activeUtterance = utteranceObj; // 防止 Chrome 記憶體回收
-
-      let hasEnded = false;
-      const finish = () => {
-        if (hasEnded) return;
-        hasEnded = true;
-        activeUtterance = null;
-        if (onEndCallback) onEndCallback();
-      };
-
-      utteranceObj.onend = finish;
-      utteranceObj.onerror = (err) => {
-        console.warn('Speech error/canceled:', err);
-        finish();
-      };
-
-      // 50ms 延遲避開 WebKit / Chrome 在 cancel() 後立即 speak() 被取消的 bug
-      setTimeout(() => {
-        try {
-          synth.resume();
-          synth.speak(utteranceObj);
-        } catch (err) {
-          console.error('synth.speak execution error:', err);
-          finish();
-        }
-      }, 50);
-    }
 
     // 0. 目錄切換與跳轉
     function toggleTocMenu(e) {
@@ -1531,21 +1427,25 @@
       currentTtsSpeed = speed;
       document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
-      if (synth && synth.speaking) {
+      if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
         stopTts();
       }
     }
 
     function stopTts() {
-      if (synth) {
-        try { synth.cancel(); } catch (e) {}
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
       }
       if (currentSpeakingEl) {
         currentSpeakingEl.classList.remove('speaking');
         const pBtn = currentSpeakingEl.querySelector('.tts-play-btn');
-        if (pBtn) pBtn.classList.remove('playing');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
         currentSpeakingEl = null;
       }
+      document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
     }
 
     // 數學專用文字轉語音優化（避免「＋」唸成加、「－」唸成減）
@@ -1579,14 +1479,13 @@
 
     function speakElement(el, e) {
       if (e) e.stopPropagation();
-      if (!synth) {
-        alert('您的瀏覽器不支援語音合成（Web Speech API）。');
+      if (!('speechSynthesis' in window)) {
+        alert('您的瀏覽器不支援語音合成（Web Speech API）。建議使用 Chrome 或 Edge 瀏覽器！');
         return;
       }
-      unlockMobileAudio();
 
       // 如果已在朗讀當前元素，點擊則停止
-      if (currentSpeakingEl === el && synth.speaking) {
+      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
         stopTts();
         return;
       }
@@ -1601,6 +1500,9 @@
       clone.querySelectorAll('.ans-reveal').forEach(n => {
         n.textContent = '空格';
       });
+      clone.querySelectorAll('.write-blank').forEach(n => {
+        n.textContent = '空格';
+      });
 
       const text = formatMathSpeech(clone.innerText || clone.textContent);
       if (!text.trim()) return;
@@ -1608,28 +1510,48 @@
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'zh-TW';
       utter.rate = currentTtsSpeed;
-      if (selectedVoice) utter.voice = selectedVoice;
+
+      // 尋找繁體中文語音
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+      if (zhVoice) utter.voice = zhVoice;
 
       currentSpeakingEl = el;
       el.classList.add('speaking');
       const pBtn = el.querySelector('.tts-play-btn');
-      if (pBtn) pBtn.classList.add('playing');
+      if (pBtn) {
+        pBtn.classList.add('playing');
+        pBtn.classList.add('speaking');
+      }
 
-      safeSpeak(utter, () => {
+      utter.onend = () => {
         el.classList.remove('speaking');
-        if (pBtn) pBtn.classList.remove('playing');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
         if (currentSpeakingEl === el) currentSpeakingEl = null;
-      });
+      };
+
+      utter.onerror = () => {
+        el.classList.remove('speaking');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      window.speechSynthesis.speak(utter);
     }
 
     // 連連看專用朗讀（僅讀題目與選項，絕對不洩漏連線解答）
     function speakMatching(e) {
       if (e) e.stopPropagation();
-      if (!synth) return;
-      unlockMobileAudio();
+      if (!('speechSynthesis' in window)) return;
       
       const el = document.getElementById('matchArea');
-      if (currentSpeakingEl === el && synth.speaking) {
+      if (currentSpeakingEl === el && window.speechSynthesis.speaking) {
         stopTts();
         return;
       }
@@ -1640,18 +1562,37 @@
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'zh-TW';
       utter.rate = currentTtsSpeed;
-      if (selectedVoice) utter.voice = selectedVoice;
+
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+      if (zhVoice) utter.voice = zhVoice;
 
       currentSpeakingEl = el;
       el.classList.add('speaking');
       const pBtn = document.querySelector('#page-3 .tts-play-btn');
-      if (pBtn) pBtn.classList.add('playing');
+      if (pBtn) {
+        pBtn.classList.add('playing');
+        pBtn.classList.add('speaking');
+      }
 
-      safeSpeak(utter, () => {
+      utter.onend = () => {
         el.classList.remove('speaking');
-        if (pBtn) pBtn.classList.remove('playing');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
         if (currentSpeakingEl === el) currentSpeakingEl = null;
-      });
+      };
+      utter.onerror = () => {
+        el.classList.remove('speaking');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
+        if (currentSpeakingEl === el) currentSpeakingEl = null;
+      };
+
+      window.speechSynthesis.speak(utter);
     }
 
     // 2. 答案顯現機制（無答案板書模式：不顯示答案）
@@ -1846,6 +1787,13 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
       });
+    }
+
+    // 確保語音列表非同步載入
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
     }
 
     window.addEventListener('DOMContentLoaded', () => {
