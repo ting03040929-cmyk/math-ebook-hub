@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -145,35 +145,40 @@
       border-color: #0284c7;
     }
 
-    /* 單題/單句朗讀小按鈕 */
+    /* 單題/單句朗讀小按鈕（穿透畫布獨立點擊） */
     .tts-play-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       font-size: 13px;
       border-radius: 50%;
       background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      border: 1.5px solid #0284c7;
       color: #0284c7;
-      cursor: pointer;
+      cursor: pointer !important;
       margin-right: 6px;
       vertical-align: middle;
-      transition: all 0.15s;
+      transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
       user-select: none;
       padding: 0;
       flex-shrink: 0;
+      position: relative;
+      z-index: 100 !important;
+      pointer-events: auto !important;
     }
     .tts-play-btn:hover {
       background: #0284c7;
       color: #ffffff;
       transform: scale(1.15);
     }
-    .tts-play-btn.playing {
-      background: #ef4444;
-      color: #ffffff;
-      border-color: #ef4444;
+    .tts-play-btn.playing,
+    .tts-play-btn.speaking {
+      background: #f59e0b !important;
+      border-color: #d97706 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
       animation: ttsPulse 1s infinite;
     }
     @keyframes ttsPulse {
@@ -433,11 +438,10 @@
       align-items: flex-start;
     }
     body:not(.pen-mode) .interactive-item {
-      cursor: pointer;
+      cursor: default;
     }
     body:not(.pen-mode) .interactive-item:hover {
-      background-color: #f8fafc;
-      outline: 1.5px dashed #93c5fd;
+      background-color: transparent;
     }
     .item-content {
       flex: 1;
@@ -447,33 +451,27 @@
       line-height: 1.5;
     }
 
-    /* 答案顯現樣式 */
+    /* 答案一律不顯示（保持純淨練習，老師板書或學生手寫） */
     .ans-reveal {
-      display: inline-block;
-      min-width: 24px;
-      color: transparent;
-      font-weight: bold;
-      transition: color 0.18s;
+      display: none !important;
     }
     .show-ans .ans-reveal,
     .interactive-item.show-one .ans-reveal {
-      color: #dc2626 !important;
+      display: none !important;
     }
 
-    /* 選擇題選項高亮 */
+    /* 選擇題選項 - 不顯示答案高亮 */
     .correct-choice {
       display: inline-block;
       padding: 0 4px;
-      transition: all 0.2s;
     }
     .show-ans .correct-choice,
     .interactive-item.show-one .correct-choice {
-      color: #dc2626 !important;
-      font-weight: bold !important;
-      border: 2px solid #dc2626 !important;
-      border-radius: 12px !important;
-      background-color: #fef2f2 !important;
-      padding: 0 5px !important;
+      color: inherit !important;
+      font-weight: normal !important;
+      border: none !important;
+      background-color: transparent !important;
+      padding: 0 4px !important;
     }
 
     /* 填空書寫線 */
@@ -567,12 +565,13 @@
       stroke: #dc2626;
       stroke-width: 3;
       stroke-dasharray: 6 4;
-      opacity: 0;
-      transition: opacity 0.25s;
+      display: none !important;
+      opacity: 0 !important;
     }
     .show-ans .match-line,
     .interactive-item.show-one .match-line {
-      opacity: 1 !important;
+      display: none !important;
+      opacity: 0 !important;
     }
 
     /* 數線繪圖盒 */
@@ -748,11 +747,7 @@
       </button>
     </div>
 
-    <!-- 一鍵全開答案按鈕 -->
-    <button class="tool-btn btn-toggle-ans" id="toggleAllAnsBtn" onclick="toggleAllAnswers()" title="一鍵全開/全隱答案">
-      <span id="ansIcon">👁️</span>
-    </button>
-    
+
     <!-- 畫筆切換按鈕 -->
     <button class="tool-btn" id="penBtn" onclick="togglePenMode()" title="螢光筆/板書筆">
       ✏️
@@ -840,42 +835,42 @@
 
       <div style="font-weight:bold; color:#0f4c81; margin: 6px 0 4px 0;">✍️ 基礎檢核小試身手：</div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">1. 你身上本來沒錢，今天媽媽給你 80 元，我們記作 ＋80 或 <span class="write-blank"><span class="ans-reveal">80</span></span>。</div>
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">2. 肚子好餓跟同學借了 100 元買早餐，代表欠人家 100 元，我們記作 <span class="write-blank"><span class="ans-reveal">－100</span></span>。</div>
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">3. 請問數字「0」是正數還是負數？答：<span class="write-blank"><span class="ans-reveal">都不是</span></span>。</div>
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">4. 負數前面的「－」號，平時可以省略不寫嗎？答：<span class="write-blank"><span class="ans-reveal">不可</span></span>。</div>
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">5. 爬山向上攀岩 5 公尺記為 ＋5，那麼向下退後 3 公尺可記為 <span class="write-blank"><span class="ans-reveal">－3</span></span>。</div>
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">6. 水庫水位比平時升高 6 公分記為 ＋6，那麼水位下降 4 公分記為 <span class="write-blank"><span class="ans-reveal">－4</span></span>。</div>
@@ -930,7 +925,7 @@
       <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 情境實戰填空（請填入純數字與正負號）：</div>
 
       <div class="grid-2col">
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">1. 阿倫做生意若賺 4500 元記為 4500，那麼賠 7000 元應記為：<br>
@@ -939,7 +934,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">2. 氣溫上升 10℃ 記為 ＋10，若氣溫下降 25℃ 則記為：<br>
@@ -948,7 +943,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">3. 零用錢收入 80 元記為 ＋80，那麼買文具支出 45 元記為：<br>
@@ -957,7 +952,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">4. 電梯上升 5 公尺記為 ＋5，那麼電梯下降 3 公尺記為：<br>
@@ -966,7 +961,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">5. 從學校向東走 2 公里記為 ＋2，那麼向西走 2.5 公里記為：<br>
@@ -975,7 +970,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">6. 水庫水位上升 8 公分記為 ＋8，若水位下降 5 公分記為：<br>
@@ -984,7 +979,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">7. 籃球比賽輸 8 分記為 －8，那麼贏 10 分可記為：<br>
@@ -993,7 +988,7 @@
           </div>
         </div>
 
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">8. 體重增加 3 公斤記為 ＋3，那麼運動後減輕 2 公斤記為：<br>
@@ -1025,7 +1020,7 @@
         <button class="tts-play-btn no-print" onclick="speakMatching(event)" title="語音朗讀連連看內容">📢</button>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-content">
           <div class="matching-container" id="matchArea">
             <!-- SVG 連線層 -->
@@ -1058,7 +1053,7 @@
 
       <div style="font-weight:bold; color:#0f4c81; margin: 8px 0 4px 0;">🎯 第二部分：觀念二選一／三選一圈圈看：</div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">1. 在數學數線上，我們通常以哪一個數字作為正負數的分界點（基準點）？</div>
@@ -1068,7 +1063,7 @@
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">2. 下列哪一個數是「負數」？</div>
@@ -1078,7 +1073,7 @@
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">3. 下列哪一個數的數值「最大」？</div>
@@ -1088,7 +1083,7 @@
         </div>
       </div>
 
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
         <div class="item-content">
           <div class="item-title">4. 向東走 50 公尺記為 ＋50，那麼「原地不動」應該記為什麼？</div>
@@ -1177,25 +1172,25 @@
       <div style="font-weight:bold; color:#0f4c81; margin: 4px 0;">✍️ 請寫出數線上各點所代表的數值（純填答）：</div>
 
       <div class="grid-2col">
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">A 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－4</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">B 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－1.5</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">C 點（原點）＝ <span class="write-blank"><span class="ans-reveal">0</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">D 點座標 ＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
@@ -1206,25 +1201,25 @@
       <div style="font-weight:bold; color:#0f4c81; margin: 8px 0 4px 0;">⚖️ 數線大小比一比（越右邊越大，在空格內填入 ＞ 或 ＜）：</div>
 
       <div class="grid-2col">
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">1. 2 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －4</div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">2. 0 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －1.5</div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">3. －4 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＜</span></span> －1.5</div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">4. 5 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> 2</div>
@@ -1261,25 +1256,25 @@
       </div>
 
       <div class="grid-2col">
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">1. 乙體重 50 公斤，可記為：<span class="write-blank"><span class="ans-reveal">＋5</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">2. 丙體重 37 公斤，可記為：<span class="write-blank"><span class="ans-reveal">－8</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">3. 丁體重正好 45 公斤，記為：<span class="write-blank"><span class="ans-reveal">0</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">4. 戊體重記為 ＋7，實際是：<span class="write-blank"><span class="ans-reveal">52</span></span></div>
@@ -1330,25 +1325,25 @@
       </table>
 
       <div class="grid-2col">
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">1. 英語實際得分：<span class="write-blank"><span class="ans-reveal">98</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">2. 數學實際得分：<span class="write-blank"><span class="ans-reveal">87</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">3. 得分最高的科目是：<span class="write-blank"><span class="ans-reveal">公民</span></span></div>
           </div>
         </div>
-        <div class="interactive-item" onclick="toggleItemAnswer(this)">
+        <div class="interactive-item">
           <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀">📢</button>
           <div class="item-content">
             <div class="item-title">4. 最高與最低分相差：<span class="write-blank"><span class="ans-reveal">12</span></span></div>
@@ -1659,29 +1654,14 @@
       });
     }
 
-    // 2. 逐題點擊顯現解答
+    // 2. 答案顯現機制（無答案板書模式：不顯示答案）
     function toggleItemAnswer(el) {
-      if (isPenMode) return; // 畫筆/橡皮擦模式時不觸發答案
-      el.classList.toggle('show-one');
+      // 答案不顯示
     }
 
-    // 3. 一鍵全開 / 全隱答案
+    // 3. 一鍵全開 / 全隱答案（無答案板書模式：不顯示答案）
     function toggleAllAnswers() {
-      isAllAnsShown = !isAllAnsShown;
-      const btn = document.getElementById('toggleAllAnsBtn');
-      const icon = document.getElementById('ansIcon');
-      const container = document.querySelector('.pages-container');
-      
-      if (isAllAnsShown) {
-        container.classList.add('show-ans');
-        btn.classList.add('active');
-        icon.textContent = '🙈';
-      } else {
-        container.classList.remove('show-ans');
-        btn.classList.remove('active');
-        icon.textContent = '👁️';
-        document.querySelectorAll('.show-one').forEach(el => el.classList.remove('show-one'));
-      }
+      // 答案不顯示
     }
 
     // 4. 畫筆與橡皮擦切換機制
@@ -1790,6 +1770,10 @@
 
         function startDraw(e) {
           if (!isPenMode) return;
+          const target = e.target;
+          if (target && (target.closest('.tts-play-btn') || target.closest('.tool-btn') || target.closest('button') || target.closest('a') || target.closest('.tts-options') || target.closest('.pen-options') || target.closest('.toc-menu'))) {
+            return;
+          }
           isDrawing = true;
           const pos = getPos(e);
           lastX = pos.x;
@@ -1870,3 +1854,5 @@
   </script>
 </body>
 </html>
+
+

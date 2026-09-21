@@ -454,26 +454,36 @@
       gap: 6px;
     }
     
-    /* 語音朗讀按鈕 */
+    /* 語音朗讀按鈕（提升 z-index，筆模式下仍可隨時點擊發音） */
     .tts-play-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      border: 1.5px solid #0284c7;
       border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 12px;
-      cursor: pointer;
+      width: 26px;
+      height: 26px;
+      font-size: 13px;
+      cursor: pointer !important;
       color: #0284c7;
       padding: 0;
       flex-shrink: 0;
-      transition: transform 0.1s, background 0.1s;
+      transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
+      position: relative;
+      z-index: 100 !important;
+      pointer-events: auto !important;
     }
     .tts-play-btn:hover {
-      background: #dbeafe;
+      background: #0284c7;
+      color: #ffffff;
       transform: scale(1.15);
+    }
+    .tts-play-btn.speaking {
+      background: #f59e0b !important;
+      border-color: #d97706 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
     }
 
     /* 題幹答案填空底線 */
@@ -486,14 +496,9 @@
       margin: 0 4px;
       line-height: 1.15;
     }
+    /* 答案一律不顯示（保持純淨練習，老師板書或學生手寫） */
     .ans-reveal {
-      color: transparent;
-      font-weight: bold;
-      transition: color 0.15s;
-    }
-    .show-ans .ans-reveal,
-    .interactive-item.ans-done .ans-reveal {
-      color: #dc2626 !important;
+      display: none !important;
     }
 
     /* 計算題 3~4 行手寫空間（細虛線框） */
@@ -520,7 +525,7 @@
       user-select: none;
     }
 
-    /* 鷹架填空樣式 */
+    /* 鷹架填空樣式（永遠維持空白底線，不顯示紅色答案） */
     .scaffold-guide {
       font-weight: bold;
       color: #0f172a;
@@ -533,25 +538,13 @@
       padding: 0 3px;
       margin: 0 2px;
       line-height: 1.1;
-      color: transparent;
+      color: transparent !important;
       font-weight: bold;
-      transition: color 0.15s;
-    }
-    .show-ans .scaffold-blank,
-    .interactive-item.ans-done .scaffold-blank,
-    .calc-step.show .scaffold-blank {
-      color: #dc2626 !important;
     }
 
-    /* 第4題完全褪除手寫框（螢幕模式隱藏解答，點擊顯示） */
+    /* 第4題完全褪除手寫框（自主實戰留白，不顯示答案） */
     .calc-step.autonomous {
-      color: transparent;
-      transition: color 0.15s;
-      font-weight: bold;
-    }
-    .show-ans .calc-step.autonomous,
-    .calc-step.autonomous.show {
-      color: #dc2626 !important;
+      display: none !important;
     }
 
     /* 成就認證卡 (第5頁專屬) */
@@ -703,11 +696,6 @@
         <button class="tts-rate-btn" onclick="setTtsRate(1.0, this)">1.0x 標準</button>
       </div>
     </div>
-
-    <!-- 一鍵全開答案按鈕 -->
-    <button class="tool-btn btn-toggle-ans" id="toggleAllAnsBtn" onclick="toggleAllAnswers()" title="一鍵全開/全隱算式與答案">
-      <span id="ansIcon">👁️</span>
-    </button>
     
     <!-- 畫筆切換按鈕 -->
     <div style="position: relative;">
@@ -809,10 +797,10 @@
         </div>
       </div>
 
-      <div class="exercise-title">✍️ 小減大基礎演練（鷹架逐步褪除，點擊依序揭曉算式）：</div>
+      <div class="exercise-title">✍️ 小減大基礎演練（鷹架逐步褪除，請動筆在下方計算框寫算式）：</div>
 
       <!-- 第 1 題：示範引導（極高鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">1. 4 － 11 ＝ <span class="write-blank"><span class="ans-reveal">－7</span></span></div>
@@ -826,7 +814,7 @@
       </div>
 
       <!-- 第 2 題：中度挖空（中鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">2. 12 － 23 ＝ <span class="write-blank"><span class="ans-reveal">－11</span></span></div>
@@ -840,7 +828,7 @@
       </div>
 
       <!-- 第 3 題：高度挖空（低鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">3. 21 － 40 ＝ <span class="write-blank"><span class="ans-reveal">－19</span></span></div>
@@ -854,7 +842,7 @@
       </div>
 
       <!-- 第 4 題：自主實戰（完全褪除手寫框） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">4. 29 － 100 ＝ <span class="write-blank"><span class="ans-reveal">－71</span></span></div>
@@ -900,10 +888,10 @@
         </div>
       </div>
 
-      <div class="exercise-title">✍️ 同負相加演練（鷹架逐步褪除，點擊依序揭曉算式）：</div>
+      <div class="exercise-title">✍️ 同負相加演練（鷹架逐步褪除，請動筆在下方計算框寫算式）：</div>
 
       <!-- 第 1 題：示範引導（極高鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">1. （－3）＋（－5）＝ <span class="write-blank"><span class="ans-reveal">－8</span></span></div>
@@ -917,7 +905,7 @@
       </div>
 
       <!-- 第 2 題：中度挖空（中鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">2. （－4）＋（－6）＝ <span class="write-blank"><span class="ans-reveal">－10</span></span></div>
@@ -931,7 +919,7 @@
       </div>
 
       <!-- 第 3 題：高度挖空（低鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">3. （－7）＋（－8）＝ <span class="write-blank"><span class="ans-reveal">－15</span></span></div>
@@ -945,7 +933,7 @@
       </div>
 
       <!-- 第 4 題：自主實戰（完全褪除手寫框） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">4. （－10）＋（－12）＝ <span class="write-blank"><span class="ans-reveal">－22</span></span></div>
@@ -991,10 +979,10 @@
         </div>
       </div>
 
-      <div class="exercise-title">✍️ 異號相減演練（鷹架逐步褪除，點擊依序揭曉算式）：</div>
+      <div class="exercise-title">✍️ 異號相減演練（鷹架逐步褪除，請動筆在下方計算框寫算式）：</div>
 
       <!-- 第 1 題：示範引導（極高鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">1. 6 ＋（－4）＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
@@ -1008,7 +996,7 @@
       </div>
 
       <!-- 第 2 題：中度挖空（中鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">2. 7 ＋（－3）＝ <span class="write-blank"><span class="ans-reveal">4</span></span></div>
@@ -1022,7 +1010,7 @@
       </div>
 
       <!-- 第 3 題：高度挖空（低鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">3. 15 ＋（－6）＝ <span class="write-blank"><span class="ans-reveal">9</span></span></div>
@@ -1036,7 +1024,7 @@
       </div>
 
       <!-- 第 4 題：自主實戰（完全褪除手寫框） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">4. 20 ＋（－8）＝ <span class="write-blank"><span class="ans-reveal">12</span></span></div>
@@ -1082,10 +1070,10 @@
         </div>
       </div>
 
-      <div class="exercise-title">✍️ 負負得正演練（鷹架逐步褪除，點擊依序揭曉算式）：</div>
+      <div class="exercise-title">✍️ 負負得正演練（鷹架逐步褪除，請動筆在下方計算框寫算式）：</div>
 
       <!-- 第 1 題：示範引導（極高鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">1. 5 －（－3）＝ <span class="write-blank"><span class="ans-reveal">8</span></span></div>
@@ -1099,7 +1087,7 @@
       </div>
 
       <!-- 第 2 題：中度挖空（中鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">2. 6 －（－5）＝ <span class="write-blank"><span class="ans-reveal">11</span></span></div>
@@ -1113,7 +1101,7 @@
       </div>
 
       <!-- 第 3 題：高度挖空（低鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">3. 8 －（－8）＝ <span class="write-blank"><span class="ans-reveal">16</span></span></div>
@@ -1127,7 +1115,7 @@
       </div>
 
       <!-- 第 4 題：自主實戰（完全褪除手寫框） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">4. 11 －（－5）＝ <span class="write-blank"><span class="ans-reveal">16</span></span></div>
@@ -1173,10 +1161,10 @@
         </div>
       </div>
 
-      <div class="exercise-title">✍️ 數線距離與座標演練（鷹架逐步褪除，點擊依序揭曉算式）：</div>
+      <div class="exercise-title">✍️ 數線距離與座標演練（鷹架逐步褪除，請動筆在下方計算框寫算式）：</div>
 
       <!-- 第 1 題：示範引導（極高鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">1. 數線上 A(4)、B(－2)，求 AB 兩點間的距離：<span class="write-blank"><span class="ans-reveal">6</span></span></div>
@@ -1191,7 +1179,7 @@
       </div>
 
       <!-- 第 2 題：中度挖空（中鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">2. 數線上 A(5)、B(－3)，求 AB 兩點間的距離：<span class="write-blank"><span class="ans-reveal">8</span></span></div>
@@ -1206,7 +1194,7 @@
       </div>
 
       <!-- 第 3 題：高度挖空（低鷹架） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">3. 數線上 B 點座標為 5，已知 AB 距離＝3，且 A 點在 B 點右邊，求 A 點座標：<span class="write-blank"><span class="ans-reveal">8</span></span></div>
@@ -1220,7 +1208,7 @@
       </div>
 
       <!-- 第 4 題：自主實戰（完全褪除手寫框） -->
-      <div class="interactive-item" onclick="toggleItemAnswer(this)">
+      <div class="interactive-item">
         <div class="item-header">
           <button class="tts-play-btn no-print" onclick="speakQuestion(this, event)" title="語音朗讀題幹">📢</button>
           <div class="item-title">4. 數線上 B 點座標為 －2，已知 AB 距離＝9，且 A 點在 B 點左邊，求 A 點座標：<span class="write-blank"><span class="ans-reveal">－11</span></span></div>
@@ -1450,15 +1438,20 @@
       utterance.rate = currentTtsSpeed;
       if (selectedVoice) utterance.voice = selectedVoice;
 
+      btn.classList.add('speaking');
       box.classList.add('speaking');
       safeSpeak(utterance, () => {
         box.classList.remove('speaking');
+        btn.classList.remove('speaking');
       });
     }
 
-    // 2. 語音朗讀題幹（答案保密不唸出）
+    // 2. 語音朗讀題幹（答案保密，筆模式下亦可自由點讀）
     function speakQuestion(btn, event) {
-      if (event) event.stopPropagation();
+      if (event) {
+        event.stopPropagation();
+        if (event.preventDefault) event.preventDefault();
+      }
       if (!synth) {
         alert('您的瀏覽器不支援語音朗讀功能');
         return;
@@ -1468,9 +1461,10 @@
       const item = btn.closest('.interactive-item');
       if (!item) return;
 
-      if (item.classList.contains('speaking')) {
+      if (btn.classList.contains('speaking') || item.classList.contains('speaking')) {
         try { synth.cancel(); } catch (e) {}
         item.classList.remove('speaking');
+        btn.classList.remove('speaking');
         return;
       }
 
@@ -1482,9 +1476,12 @@
       const clone = qHeader.cloneNode(true);
       clone.querySelectorAll('.tts-play-btn, .drawing-canvas').forEach(b => b.remove());
 
-      // 答案空格替換為「空格」，絕對不唸出解答
+      // 答案與填空一律唸「空格」，絕對不唸出解答
       clone.querySelectorAll('.ans-reveal').forEach(n => {
-        n.textContent = '空格';
+        n.textContent = ' 空格 ';
+      });
+      clone.querySelectorAll('.write-blank').forEach(n => {
+        n.textContent = ' 空格 ';
       });
 
       let text = clone.textContent.trim();
@@ -1497,55 +1494,21 @@
       utterance.rate = currentTtsSpeed;
       if (selectedVoice) utterance.voice = selectedVoice;
 
+      btn.classList.add('speaking');
       item.classList.add('speaking');
       safeSpeak(utterance, () => {
         item.classList.remove('speaking');
+        btn.classList.remove('speaking');
       });
     }
 
-    // 3. 逐題點擊逐步顯現解答（一個等號算一步驟，點擊依序揭曉）
+    // 不顯示答案：點擊不揭曉解答，保持純淨供教師板書與學生練習
     function toggleItemAnswer(el) {
-      if (isPenMode) return; // 畫筆/橡皮擦模式時不觸發答案點擊
-
-      const steps = el.querySelectorAll('.calc-step');
-      if (steps.length === 0) {
-        el.classList.toggle('ans-done');
-        return;
-      }
-
-      const shownSteps = el.querySelectorAll('.calc-step.show').length;
-
-      if (shownSteps < steps.length) {
-        steps[shownSteps].classList.add('show');
-        if (shownSteps + 1 === steps.length) {
-          el.classList.add('ans-done');
-        }
-      } else {
-        steps.forEach(s => s.classList.remove('show'));
-        el.classList.remove('ans-done');
-      }
+      return;
     }
 
-    // 4. 一鍵全開 / 全隱答案
     function toggleAllAnswers() {
-      isAllAnsShown = !isAllAnsShown;
-      const btn = document.getElementById('toggleAllAnsBtn');
-      const icon = document.getElementById('ansIcon');
-      const container = document.querySelector('.pages-container');
-
-      if (isAllAnsShown) {
-        container.classList.add('show-ans');
-        btn.classList.add('active');
-        icon.textContent = '🙈';
-        document.querySelectorAll('.calc-step').forEach(s => s.classList.add('show'));
-        document.querySelectorAll('.interactive-item').forEach(el => el.classList.add('ans-done'));
-      } else {
-        container.classList.remove('show-ans');
-        btn.classList.remove('active');
-        icon.textContent = '👁️';
-        document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('show'));
-        document.querySelectorAll('.interactive-item').forEach(el => el.classList.remove('ans-done'));
-      }
+      return;
     }
 
     // 5. 畫筆與橡皮擦切換機制
@@ -1637,6 +1600,10 @@
 
         function startDraw(e) {
           if (!isPenMode) return;
+          const target = e.target;
+          if (target && (target.closest('.tts-play-btn') || target.closest('.tool-btn') || target.closest('button') || target.closest('a'))) {
+            return;
+          }
           isDrawing = true;
           const rect = canvas.getBoundingClientRect();
           const clientX = e.touches ? e.touches[0].clientX : e.clientX;
