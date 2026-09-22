@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>國中特教數學 教材總入口 (Math Portal)</title>
+  <title>國中特教數學 自製電子書教材庫 (Math Ebook Hub)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
@@ -12,13 +12,9 @@
     :root {
       --primary: #0284c7;
       --primary-dark: #0369a1;
-      --primary-light: #e0f2fe;
-      --voice-color: #0d9488;
-      --voice-hover: #0f766e;
-      --voice-light: #ccfbf1;
-      --interactive-color: #2563eb;
-      --interactive-hover: #1d4ed8;
-      --interactive-light: #dbeafe;
+      --interactive-color: #0284c7;
+      --interactive-hover: #0369a1;
+      --interactive-light: #e0f2fe;
       --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
       --card-bg: #ffffff;
       --text-main: #0f172a;
@@ -234,7 +230,7 @@
 
     .card-top-strip {
       height: 7px;
-      background: linear-gradient(90deg, var(--voice-color), var(--interactive-color));
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
     }
     .card-top-strip.partial {
       background: linear-gradient(90deg, #38bdf8, #818cf8);
@@ -349,16 +345,6 @@
     }
     .btn-action:active {
       transform: scale(0.98);
-    }
-
-    /* 按鈕 1：語音教材 */
-    .btn-voice {
-      background: linear-gradient(135deg, #0d9488, #0f766e);
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
-    }
-    .btn-voice:hover {
-      background: linear-gradient(135deg, #14b8a6, #0d9488);
-      box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
     }
 
     /* 按鈕 2：互動練習 */
@@ -541,26 +527,26 @@
   <!-- 頂部快速切換條 -->
   <div class="utility-bar">
     <div>
-      <span>🎯 國中特教數學 教學平台</span>
+      <span>🎯 國中特教數學 自製電子書教材庫</span>
     </div>
     <div style="display:flex; gap:10px; align-items:center;">
-      <a href="ebooks.html" title="切換至僅顯示電子書模式">📖 純電子書模式</a>
-      <a href="https://ting03040929-cmyk.github.io/voice-reading-hub/index.html" target="_blank" title="前往語音報讀專案">🔊 語音報讀中心</a>
+      <span style="color:#94a3b8; font-size:12px;">📖 雙模式自製電子書 ‧ 零干擾專注學習</span>
     </div>
   </div>
 
   <header>
     <div class="header-content">
-      <div class="header-tag">✨ 特教友善 ‧ 一鍵直達雙模式教材</div>
-      <h1>國中特教數學 教材總入口</h1>
+      <div class="header-tag">✨ 特教友善 ‧ 互動自製電子書</div>
+      <h1>國中特教數學 自製電子書教材庫</h1>
       <p class="subtitle">
-        一個網址涵蓋特教全功能：題目識字輔助請點「🔊 語音教材」搭配紙本；課堂投影示範與學生反覆操作請點「🎮 互動練習」。
+        專為國中特教個別化教學與課堂大屏設計：支援觸控大屏逐題示範、4階適性褪除鷹架、多色板書畫筆、以及純淨白紙 A4 零溢頁列印。
       </p>
       <div class="features-bar">
-        <span class="feat-chip">🔊 語音報讀（答案保密）</span>
-        <span class="feat-chip">🎮 AI 互動電子書（步驟鷹架）</span>
+        <span class="feat-chip">📖 AI 互動電子書（步驟鷹架）</span>
+        <span class="feat-chip">🖥️ 觸控大屏逐題點解</span>
+        <span class="feat-chip">✏️ 多色板書畫筆</span>
+        <span class="feat-chip">🖨️ A4 純淨白紙列印</span>
         <span class="feat-chip">📱 平板一鍵 QR Code 掃碼</span>
-        <span class="feat-chip">🧩 特教學障友善大字體</span>
       </div>
     </div>
   </header>
@@ -603,7 +589,7 @@
   </div>
 
   <footer>
-    國中特教數學 教材總入口 ‧ 謝惠婷老師編製 ‧ 整合「語音報讀中心」與「AI 互動電子書庫」<br>
+    國中特教數學 自製電子書教材庫 ‧ 謝惠婷老師編製<br>
     支援 Chrome / Edge / iPad 平板教學 / 觸控大螢幕
   </footer>
 
@@ -621,8 +607,7 @@
         grade: "七年級上學期",
         desc: "全套 5 頁特教闖關：正負數概念圖、相反量百寶箱、SVG 動態連連看、數線三要素找點、以及段考與體重生活基準量題組。",
         tags: ["正負數", "數線", "相反量", "基準點", "特教五關"],
-        voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-g7-pos-neg.html",
-        ebookUrl: "unit1-1.html?v=4"
+                ebookUrl: "unit1-1.html?v=4"
       },
       {
         id: "unit-1-2",
@@ -632,8 +617,7 @@
         grade: "七年級上學期",
         desc: "全套 5 頁特教關卡：大減小與小減大、同號負負相加、異號正負抵消、負負得正、數線兩點距離。4 階適性褪除鷹架，循序漸進解題。",
         tags: ["正負數加減", "數線距離", "負負得正", "4階鷹架"],
-        voiceUrl: "",
-        ebookUrl: "unit1-2.html?v=4"
+                ebookUrl: "unit1-2.html?v=4"
       },
       {
         id: "quiz-1",
@@ -643,8 +627,7 @@
         grade: "七年級上學期",
         desc: "「+」家族與「-」家族相反詞整理（賺錢/花錢、收入/支出、上升/下降、贏了/輸了、東/西）與 15 題生活情境正負數選擇題。",
         tags: ["正負數", "相反量", "家族分類", "生活情境", "隨堂練習"],
-        voiceUrl: "https://ting03040929-cmyk.github.io/voice-reading-hub/materials/math-917-quiz.html",
-        ebookUrl: ""
+                ebookUrl: ""
       },
       {
         id: "unit-1-3",
@@ -654,8 +637,7 @@
         grade: "七年級上學期",
         desc: "正正得正、負負得正、先乘除後加減口訣卡、運算規則拆解與生活素養綜合演練。",
         tags: ["乘除規則", "四則混合", "口訣卡"],
-        voiceUrl: "",
-        ebookUrl: ""
+                ebookUrl: ""
       },
       {
         id: "unit-2-1",
@@ -665,8 +647,7 @@
         grade: "七年級上學期",
         desc: "結構化倍數判定法（2、3、5、11的倍數）、質因數分解直式短除法與生活實用題組。",
         tags: ["倍數判定", "質數合數", "短除法鷹架"],
-        voiceUrl: "",
-        ebookUrl: ""
+                ebookUrl: ""
       }
     ];
 
@@ -715,22 +696,12 @@
       }
 
       filtered.forEach(item => {
-        const hasVoice = Boolean(item.voiceUrl && item.voiceUrl.trim());
         const hasEbook = Boolean(item.ebookUrl && item.ebookUrl.trim());
 
-        let stripClass = 'waiting';
-        let statusBadge = `<span class="status-badge waiting">⏳ 籌備建置中</span>`;
-
-        if (hasVoice && hasEbook) {
-          stripClass = '';
-          statusBadge = `<span class="status-badge both">● 雙模式已就緒</span>`;
-        } else if (hasVoice) {
-          stripClass = 'partial';
-          statusBadge = `<span class="status-badge partial">● 語音報讀已開放</span>`;
-        } else if (hasEbook) {
-          stripClass = 'partial';
-          statusBadge = `<span class="status-badge partial">● 互動電子書已開放</span>`;
-        }
+        const stripClass = hasEbook ? '' : 'waiting';
+        const statusBadge = hasEbook 
+          ? `<span class="status-badge both">● 電子書已上架</span>`
+          : `<span class="status-badge waiting">⏳ 籌備建置中</span>`;
 
         const card = document.createElement('div');
         card.className = 'unit-card';
@@ -750,34 +721,17 @@
             </div>
 
             <div class="action-buttons-group">
-              <!-- 按鈕 1：語音教材 -->
-              <div class="action-row">
-                ${hasVoice ? `
-                  <a href="${item.voiceUrl}" target="_blank" class="btn-action btn-voice">
-                    <span>🔊 語音教材（聽讀題目）</span>
-                  </a>
-                  <button class="btn-qr" title="產生平板掃碼 QR Code" onclick="openQrModal('🔊 ${item.unitNumber} 語音教材', '請使用平板掃碼聽讀題目', '${item.voiceUrl}')">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2h2v2H2V2Z"/><path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/><path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/><path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 3v-1h1v1h-1Zm-1-1h-1v2h-1v-1H9v1h1v1H9v1h1v-1h2v-1h-1v-2Zm1 3v-1h1v2h-2v-1h1Zm-8-1h1v1H7v-1Zm-2 0h1v2H5v-2Zm-1 1h-1v1H2v-1h1v-1h1v1Zm-2 1v1h1v-1H1Zm13-3h1v1h-1v-1Zm-3 3h1v1h-1v-1Z"/></svg>
-                  </button>
-                ` : `
-                  <button class="btn-action btn-disabled">
-                    <span>🔊 語音教材（建置中）</span>
-                  </button>
-                `}
-              </div>
-
-              <!-- 按鈕 2：互動練習 -->
               <div class="action-row">
                 ${hasEbook ? `
                   <a href="${item.ebookUrl}" class="btn-action btn-interactive">
-                    <span>🎮 互動練習（AI 電子書）</span>
+                    <span>📖 進入自製電子書</span>
                   </a>
-                  <button class="btn-qr" title="產生平板掃碼 QR Code" onclick="openQrModal('🎮 ${item.unitNumber} 互動練習', '請使用平板掃碼進入互動電子書', '${item.ebookUrl}')">
+                  <button class="btn-qr" title="產生平板掃碼 QR Code" onclick="openQrModal('📖 ${item.unitNumber} 自製電子書', '請使用平板掃碼進入自製電子書', '${item.ebookUrl}')">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2h2v2H2V2Z"/><path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/><path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/><path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 3v-1h1v1h-1Zm-1-1h-1v2h-1v-1H9v1h1v1H9v1h1v-1h2v-1h-1v-2Zm1 3v-1h1v2h-2v-1h1Zm-8-1h1v1H7v-1Zm-2 0h1v2H5v-2Zm-1 1h-1v1H2v-1h1v-1h1v1Zm-2 1v1h1v-1H1Zm13-3h1v1h-1v-1Zm-3 3h1v1h-1v-1Z"/></svg>
                   </button>
                 ` : `
                   <button class="btn-action btn-disabled">
-                    <span>🎮 互動練習（建置中）</span>
+                    <span>📖 電子書（建置中）</span>
                   </button>
                 `}
               </div>
@@ -852,34 +806,6 @@
     // 初次渲染
     renderCards();
 
-    // 自動與 Voice Reading Hub 動態比對最新上線之教材
-    async function syncRemoteVoiceMaterials() {
-      try {
-        const res = await fetch('https://ting03040929-cmyk.github.io/voice-reading-hub/data/materials.json', { cache: 'no-cache' });
-        if (res.ok) {
-          const remoteList = await res.json();
-          let hasUpdate = false;
-          remoteList.forEach(m => {
-            unitsList.forEach(u => {
-              if (!u.voiceUrl && m.file) {
-                const match1 = u.unitNumber && m.title.includes(u.unitNumber);
-                const match2 = m.tags && u.tags && u.tags.some(t => t.length > 2 && m.tags.includes(t));
-                if (match1 || match2) {
-                  u.voiceUrl = `https://ting03040929-cmyk.github.io/voice-reading-hub/${m.file}`;
-                  hasUpdate = true;
-                }
-              }
-            });
-          });
-          if (hasUpdate) {
-            renderCards();
-          }
-        }
-      } catch (e) {
-        // 離線或本機 file:// 瀏覽時優雅保留預設清單
-      }
-    }
-    syncRemoteVoiceMaterials();
-  </script>
+    </script>
 </body>
 </html>
