@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>國中數學 七上 1-1 正數與負數 - 雙模式自製電子書</title>
+  <title>國中數學 七上 1-1 正數與負數 - 雙模式自製電子書（支援語音報讀）</title>
   <style>
     @page {
       size: A4 portrait;
@@ -115,6 +115,84 @@
       height: 18px;
       background: #cbd5e1;
       margin: 0 3px;
+    }
+
+    /* 語音面板 (TTS Options) */
+    .tts-options {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      margin-left: 2px;
+    }
+    .tts-speed-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .tts-speed-btn.active {
+      background: #0284c7;
+      color: #fff;
+      border-color: #0284c7;
+    }
+
+    /* 單題/單句朗讀小按鈕（穿透畫布獨立點擊） */
+    .tts-play-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      font-size: 13px;
+      border-radius: 50%;
+      background: #eff6ff;
+      border: 1.5px solid #0284c7;
+      color: #0284c7;
+      cursor: pointer !important;
+      margin-right: 6px;
+      vertical-align: middle;
+      transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
+      user-select: none;
+      padding: 0;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 100 !important;
+      pointer-events: auto !important;
+    }
+    .tts-play-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      transform: scale(1.15);
+    }
+    .tts-play-btn.playing,
+    .tts-play-btn.speaking {
+      background: #f59e0b !important;
+      border-color: #d97706 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+      animation: ttsPulse 1s infinite;
+    }
+    @keyframes ttsPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    /* 正在朗讀的視覺高亮 */
+    .speaking {
+      background-color: #fef08a !important;
+      box-shadow: 0 0 0 2px #facc15 !important;
+      border-radius: 6px;
+      transition: background-color 0.2s;
     }
 
     /* 目錄跳轉選單 (TOC Floating Menu) */
@@ -548,6 +626,14 @@
       .toc-menu,
       .drawing-canvas,
       .matching-svg-layer,
+      .tts-play-btn,
+      .tts-options {
+        display: none !important;
+      }
+      .speaking {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
       .pages-container {
         display: block !important;
         padding: 0 !important;
@@ -645,6 +731,23 @@
       </div>
     </div>
 
+    <!-- 語音朗讀工具開關 -->
+    <button class="tool-btn" id="ttsToggleBtn" onclick="toggleTtsOptions()" title="語音報讀工具">
+      🔊
+    </button>
+
+    <!-- 語音設定小面板 -->
+    <div class="tts-options" id="ttsOptions">
+      <button class="tts-speed-btn active" onclick="setTtsSpeed(0.8, this)" title="特教推薦語速">0.8x</button>
+      <button class="tts-speed-btn" onclick="setTtsSpeed(0.9, this)" title="舒緩語速">0.9x</button>
+      <button class="tts-speed-btn" onclick="setTtsSpeed(1.0, this)" title="正常語速">1.0x</button>
+      <div class="sub-divider"></div>
+      <button class="tool-btn" style="width:26px; height:26px; font-size:13px;" onclick="stopTts()" title="停止朗讀">
+        ⏹️
+      </button>
+    </div>
+
+
     <!-- 畫筆切換按鈕 -->
     <button class="tool-btn" id="penBtn" onclick="togglePenMode()" title="螢光筆/板書筆">
       ✏️
@@ -705,7 +808,8 @@
       <div class="concept-box">
         <div class="concept-title">
           <span>💡 觀念核心：正數、負數與基準點</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀本段觀念" data-audio="audio/unit1-1/btn_1.mp3">📢</button>
+        </div>
         <div style="font-size: 13.5pt; line-height: 1.5;">
           1. <b>正數</b>：比 <b>0</b> 大的數，用「<b>＋</b>」表示。平時可將＋號省略不寫（例如：＋50 可記為 50）。<br>
           2. <b>負數</b>：比 <b>0</b> 小的數，用「<b>－</b>」表示，負號<b>絕對不能省略</b>（例如：欠 20 元記為 －20）。<br>
@@ -717,7 +821,8 @@
       <div class="concept-box" style="background:#f0fdf4; border-color:#bbf7d0;">
         <div class="concept-title" style="color:#15803d;">
           <span>🧭 生活中常見的「相對與相反量」心智圖</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀心智圖" data-audio="audio/unit1-1/btn_2.mp3">📢</button>
+        </div>
         <div class="concept-grid">
           <div class="concept-item">賺錢 <b>(＋)</b> ↔ 賠錢 <b>(－)</b></div>
           <div class="concept-item">收入 <b>(＋)</b> ↔ 支出 <b>(－)</b></div>
@@ -731,36 +836,42 @@
       <div style="font-weight:bold; color:#0f4c81; margin: 6px 0 4px 0;">✍️ 基礎檢核小試身手：</div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_3.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">1. 你身上本來沒錢，今天媽媽給你 80 元，我們記作 ＋80 或 <span class="write-blank"><span class="ans-reveal">80</span></span>。</div>
         </div>
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_4.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">2. 肚子好餓跟同學借了 100 元買早餐，代表欠人家 100 元，我們記作 <span class="write-blank"><span class="ans-reveal">－100</span></span>。</div>
         </div>
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_5.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">3. 請問數字「0」是正數還是負數？答：<span class="write-blank"><span class="ans-reveal">都不是</span></span>。</div>
         </div>
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_6.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">4. 負數前面的「－」號，平時可以省略不寫嗎？答：<span class="write-blank"><span class="ans-reveal">不可</span></span>。</div>
         </div>
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_7.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">5. 爬山向上攀岩 5 公尺記為 ＋5，那麼向下退後 3 公尺可記為 <span class="write-blank"><span class="ans-reveal">－3</span></span>。</div>
         </div>
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_8.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">6. 水庫水位比平時升高 6 公分記為 ＋6，那麼水位下降 4 公分記為 <span class="write-blank"><span class="ans-reveal">－4</span></span>。</div>
         </div>
@@ -815,6 +926,7 @@
 
       <div class="grid-2col">
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_9.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">1. 阿倫做生意若賺 4500 元記為 4500，那麼賠 7000 元應記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－7000</span></span>
@@ -823,6 +935,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_10.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">2. 氣溫上升 10℃ 記為 ＋10，若氣溫下降 25℃ 則記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－25</span></span>
@@ -831,6 +944,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_11.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">3. 零用錢收入 80 元記為 ＋80，那麼買文具支出 45 元記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－45</span></span>
@@ -839,6 +953,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_12.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">4. 電梯上升 5 公尺記為 ＋5，那麼電梯下降 3 公尺記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－3</span></span>
@@ -847,6 +962,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_13.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">5. 從學校向東走 2 公里記為 ＋2，那麼向西走 2.5 公里記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－2.5</span></span>
@@ -855,6 +971,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_14.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">6. 水庫水位上升 8 公分記為 ＋8，若水位下降 5 公分記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－5</span></span>
@@ -863,6 +980,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_15.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">7. 籃球比賽輸 8 分記為 －8，那麼贏 10 分可記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">＋10</span></span>
@@ -871,6 +989,7 @@
         </div>
 
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_16.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">8. 體重增加 3 公斤記為 ＋3，那麼運動後減輕 2 公斤記為：<br>
               答：<span class="write-blank"><span class="ans-reveal">－2</span></span>
@@ -898,7 +1017,8 @@
 
       <div style="font-weight:bold; color:#0f4c81; margin: 4px 0; display:flex; align-items:center; justify-content:space-between;">
         <span>🧩 第一部分：請將左側的生活情境，連到右側對應的正負數：</span>
-        </div>
+        <button class="tts-play-btn no-print" onclick="speakMatching(event)" title="語音朗讀連連看內容" data-audio="audio/unit1-1/btn_17.mp3">📢</button>
+      </div>
 
       <div class="interactive-item">
         <div class="item-content">
@@ -934,6 +1054,7 @@
       <div style="font-weight:bold; color:#0f4c81; margin: 8px 0 4px 0;">🎯 第二部分：觀念二選一／三選一圈圈看：</div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_18.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">1. 在數學數線上，我們通常以哪一個數字作為正負數的分界點（基準點）？</div>
           <div style="margin-left: 10px;">
@@ -943,6 +1064,7 @@
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_19.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">2. 下列哪一個數是「負數」？</div>
           <div style="margin-left: 10px;">
@@ -952,6 +1074,7 @@
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_20.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">3. 下列哪一個數的數值「最大」？</div>
           <div style="margin-left: 10px;">
@@ -961,6 +1084,7 @@
       </div>
 
       <div class="interactive-item">
+        <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_21.mp3">📢</button>
         <div class="item-content">
           <div class="item-title">4. 向東走 50 公尺記為 ＋50，那麼「原地不動」應該記為什麼？</div>
           <div style="margin-left: 10px;">
@@ -990,7 +1114,8 @@
       <div class="concept-box">
         <div class="concept-title">
           <span>📏 數線三要素：原點、方向、單位長</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀三要素" data-audio="audio/unit1-1/btn_22.mp3">📢</button>
+        </div>
         <div style="font-size: 13pt; line-height: 1.5;">
           1. <b>原點</b>：標示數字 <b>0</b> 的基準起點。<br>
           2. <b>方向</b>：箭頭一律向<b>右</b>（正向），表示越往右邊數值越<b>大</b>，越往左邊越<b>小</b>。<br>
@@ -1002,7 +1127,8 @@
       <div class="number-line-wrap">
         <div style="font-weight: bold; margin-bottom: 4px; color: #0f4c81; display:flex; align-items:center; justify-content:center;">
           <span>📍 觀察下方數線，求出 A、B、C、D、E 各點所代表的數：</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.number-line-wrap'), event)" title="語音朗讀數線題目" data-audio="audio/unit1-1/btn_23.mp3">📢</button>
+        </div>
         
         <svg class="number-line-svg" viewBox="0 0 650 95">
           <!-- 數線主軸 -->
@@ -1047,21 +1173,25 @@
 
       <div class="grid-2col">
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_24.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">A 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－4</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_25.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">B 點座標 ＝ <span class="write-blank"><span class="ans-reveal">－1.5</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_26.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">C 點（原點）＝ <span class="write-blank"><span class="ans-reveal">0</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_27.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">D 點座標 ＝ <span class="write-blank"><span class="ans-reveal">2</span></span></div>
           </div>
@@ -1072,21 +1202,25 @@
 
       <div class="grid-2col">
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_28.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">1. 2 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －4</div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_29.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">2. 0 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> －1.5</div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_30.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">3. －4 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＜</span></span> －1.5</div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_31.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">4. 5 <span class="write-blank" style="min-width:40px;"><span class="ans-reveal">＞</span></span> 2</div>
           </div>
@@ -1114,7 +1248,8 @@
       <div class="concept-box" style="margin-bottom: 6px;">
         <div class="concept-title">
           <span>⚖️ 題組一：體重基準（以 45 公斤為基準點 0）</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀說明" data-audio="audio/unit1-1/btn_32.mp3">📢</button>
+        </div>
         <div style="font-size: 13pt;">
           若以標準體重 <b>45 公斤</b>為基準，甲體重 48 公斤記為 <b>＋3</b>。
         </div>
@@ -1122,21 +1257,25 @@
 
       <div class="grid-2col">
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_33.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">1. 乙體重 50 公斤，可記為：<span class="write-blank"><span class="ans-reveal">＋5</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_34.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">2. 丙體重 37 公斤，可記為：<span class="write-blank"><span class="ans-reveal">－8</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_35.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">3. 丁體重正好 45 公斤，記為：<span class="write-blank"><span class="ans-reveal">0</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_36.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">4. 戊體重記為 ＋7，實際是：<span class="write-blank"><span class="ans-reveal">52</span></span></div>
           </div>
@@ -1147,7 +1286,8 @@
       <div class="concept-box" style="margin-top: 8px; margin-bottom: 6px;">
         <div class="concept-title">
           <span>📊 題組二：段考相差分數（以國文 91 分為基準 0）</span>
-          </div>
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀說明" data-audio="audio/unit1-1/btn_37.mp3">📢</button>
+        </div>
         <div style="font-size: 13pt;">
           阿晶第一次段考，以國文 91 分為基準，其他科目相差分數如下：
         </div>
@@ -1186,21 +1326,25 @@
 
       <div class="grid-2col">
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_38.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">1. 英語實際得分：<span class="write-blank"><span class="ans-reveal">98</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_39.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">2. 數學實際得分：<span class="write-blank"><span class="ans-reveal">87</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_40.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">3. 得分最高的科目是：<span class="write-blank"><span class="ans-reveal">公民</span></span></div>
           </div>
         </div>
         <div class="interactive-item">
+          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.interactive-item'), event)" title="語音朗讀" data-audio="audio/unit1-1/btn_41.mp3">📢</button>
           <div class="item-content">
             <div class="item-title">4. 最高與最低分相差：<span class="write-blank"><span class="ans-reveal">12</span></span></div>
           </div>
@@ -1234,7 +1378,12 @@
     let currentSize = 3;
     let eraserSize = 26;
     const canvases = [];
-// 0. 目錄切換與跳轉
+
+    // 語音朗讀狀態
+    let currentTtsSpeed = 0.8;
+    let currentSpeakingEl = null;
+
+    // 0. 目錄切換與跳轉
     function toggleTocMenu(e) {
       if (e) e.stopPropagation();
       const menu = document.getElementById('tocMenu');
@@ -1259,6 +1408,236 @@
         }
       }
     });
+
+    // 1. 語音朗讀面板控制與特教數學自然發音
+    function toggleTtsOptions() {
+      const opts = document.getElementById('ttsOptions');
+      const btn = document.getElementById('ttsToggleBtn');
+      if (!opts) return;
+      if (opts.style.display === 'inline-flex') {
+        opts.style.display = 'none';
+        btn.classList.remove('active');
+      } else {
+        opts.style.display = 'inline-flex';
+        btn.classList.add('active');
+      }
+    }
+
+    function setTtsSpeed(speed, btnEl) {
+      currentTtsSpeed = speed;
+      document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+        stopTts();
+      }
+    }
+
+    function stopTts() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentSpeakingEl) {
+        currentSpeakingEl.classList.remove('speaking');
+        const pBtn = currentSpeakingEl.querySelector('.tts-play-btn');
+        if (pBtn) {
+          pBtn.classList.remove('playing');
+          pBtn.classList.remove('speaking');
+        }
+        currentSpeakingEl = null;
+      }
+      document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+    }
+
+    // 數學專用文字轉語音優化（避免「＋」唸成加、「－」唸成減）
+    function formatMathSpeech(rawText) {
+      if (!rawText) return '';
+      let s = rawText;
+      s = s.replace(/七年____班.*姓名：___________/g, '');
+      // 正負數符號智慧轉換
+      s = s.replace(/＋(\d+(\.\d+)?)/g, '正 $1 ');
+      s = s.replace(/\+(\d+(\.\d+)?)/g, '正 $1 ');
+      s = s.replace(/－(\d+(\.\d+)?)/g, '負 $1 ');
+      s = s.replace(/-(\d+(\.\d+)?)/g, '負 $1 ');
+      // 常用符號與單位優化
+      s = s.replace(/℃/g, '度');
+      s = s.replace(/＞/g, '大於');
+      s = s.replace(/＜/g, '小於');
+      s = s.replace(/＝/g, '等於');
+      s = s.replace(/\(A\)/g, '選項 A ');
+      s = s.replace(/\(B\)/g, '選項 B ');
+      s = s.replace(/\(C\)/g, '選項 C ');
+      s = s.replace(/\(D\)/g, '選項 D ');
+      s = s.replace(/【|】/g, ' ');
+      s = s.replace(/____/g, '空格');
+      s = s.replace(/A\(-4\)/g, 'A點負四');
+      s = s.replace(/B\(-1\.5\)/g, 'B點負一點五');
+      s = s.replace(/C\(0\)/g, 'C點零');
+      s = s.replace(/D\(2\)/g, 'D點二');
+      s = s.replace(/E\(5\)/g, 'E點五');
+      return s;
+    }
+
+    
+    // === 📱 雙引擎/三重備援語音報讀（微軟真人 MP3 ＋ Web Speech ＋ 線上音訊備援） ===
+    const globalAudio = new Audio();
+    let currentSpeakingBtn = null;
+    let currentSpeakingBox = null;
+
+    function stopAllAudio() {
+      try {
+        globalAudio.pause();
+        globalAudio.currentTime = 0;
+      } catch (e) {}
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+      }
+      if (currentSpeakingBtn) {
+        currentSpeakingBtn.classList.remove('speaking', 'playing');
+        currentSpeakingBtn = null;
+      }
+      if (currentSpeakingBox) {
+        currentSpeakingBox.classList.remove('speaking');
+        currentSpeakingBox = null;
+      }
+      if (currentSpeakingEl) {
+        currentSpeakingEl.classList.remove('speaking');
+        currentSpeakingEl = null;
+      }
+      document.querySelectorAll('.speaking, .playing').forEach(el => el.classList.remove('speaking', 'playing'));
+    }
+
+    function stopTts() {
+      stopAllAudio();
+    }
+
+    function playAudio(btn, text, parentBox) {
+      if (btn && (btn.classList.contains('speaking') || btn.classList.contains('playing'))) {
+        stopAllAudio();
+        return;
+      }
+
+      stopAllAudio();
+
+      if (btn) {
+        btn.classList.add('speaking', 'playing');
+        currentSpeakingBtn = btn;
+      }
+      if (parentBox) {
+        parentBox.classList.add('speaking');
+        currentSpeakingBox = parentBox;
+        currentSpeakingEl = parentBox;
+      }
+
+      const audioSrc = btn ? btn.getAttribute('data-audio') : null;
+      
+      const onEnd = () => {
+        if (btn) btn.classList.remove('speaking', 'playing');
+        if (parentBox) parentBox.classList.remove('speaking');
+        if (currentSpeakingBtn === btn) currentSpeakingBtn = null;
+        if (currentSpeakingBox === parentBox) currentSpeakingBox = null;
+        if (currentSpeakingEl === parentBox) currentSpeakingEl = null;
+      };
+
+      // 優先級 1：使用預先生成的微軟真人 MP3 檔案（全手機/平板/LINE 100% 免設定直接出聲）
+      if (audioSrc) {
+        globalAudio.src = audioSrc;
+        globalAudio.defaultPlaybackRate = currentTtsSpeed || 0.8;
+        globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        globalAudio.onplay = () => {
+          globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        };
+        globalAudio.onended = onEnd;
+        globalAudio.onerror = () => {
+          console.warn('MP3 load error, fallback to speech synthesis / online audio');
+          fallbackSpeech(text, onEnd);
+        };
+        const p = globalAudio.play();
+        if (p !== undefined) {
+          p.catch(err => {
+            console.warn('MP3 play prevented, fallback:', err);
+            fallbackSpeech(text, onEnd);
+          });
+        }
+        return;
+      }
+
+      fallbackSpeech(text, onEnd);
+    }
+
+    function fallbackSpeech(text, onEnd) {
+      if (!text || !text.trim()) {
+        if (onEnd) onEnd();
+        return;
+      }
+
+      // 備援 1：原生 Web Speech API
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'zh-TW';
+          utter.rate = currentTtsSpeed || 0.8;
+          const voices = window.speechSynthesis.getVoices();
+          const zhVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang.includes('TW'));
+          if (zhVoice) utter.voice = zhVoice;
+
+          let done = false;
+          const finish = () => {
+            if (done) return;
+            done = true;
+            if (onEnd) onEnd();
+          };
+          utter.onend = finish;
+          utter.onerror = () => {
+            onlineTtsFallback(text, finish);
+          };
+          window.speechSynthesis.speak(utter);
+          return;
+        } catch (e) {
+          console.warn('speechSynthesis exception:', e);
+        }
+      }
+
+      // 備援 2：Google 線上音訊串流（杜絕任何不支援彈窗！）
+      onlineTtsFallback(text, onEnd);
+    }
+
+    function onlineTtsFallback(text, onEnd) {
+      try {
+        globalAudio.src = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-TW&client=tw-ob&q=' + encodeURIComponent(text);
+        globalAudio.defaultPlaybackRate = currentTtsSpeed || 0.8;
+        globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        globalAudio.onplay = () => {
+          globalAudio.playbackRate = currentTtsSpeed || 0.8;
+        };
+        globalAudio.onended = onEnd;
+        globalAudio.onerror = () => { if (onEnd) onEnd(); };
+        const p = globalAudio.play();
+        if (p !== undefined) {
+          p.catch(() => { if (onEnd) onEnd(); });
+        }
+      } catch (e) {
+        if (onEnd) onEnd();
+      }
+    }
+
+    function speakElement(el, e) {
+      if (e) e.stopPropagation();
+      const btn = (e && e.target && e.target.closest('.tts-play-btn')) || (el ? el.querySelector('.tts-play-btn') : null);
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('.tts-play-btn, .drawing-canvas, script').forEach(n => n.remove());
+      clone.querySelectorAll('.ans-reveal, .write-blank').forEach(n => { n.textContent = '空格'; });
+      const text = formatMathSpeech(clone.innerText || clone.textContent);
+      playAudio(btn || el, text, el);
+    }
+
+    function speakMatching(e) {
+      if (e) e.stopPropagation();
+      const el = document.getElementById('matchArea');
+      const btn = document.querySelector('#page-3 .tts-play-btn');
+      const text = "第一部分：請將左側的生活情境，連到右側對應的正負數。左側題目：A. 賠 500 元，B. 零度以下 3 度，C. 向西走 6 公里，D. 體重減輕 4 公斤。右側選項：負 3、負 500、負 4、負 6。請在紙上動手連連看。";
+      playAudio(btn, text, el);
+    }
 
     // 2. 答案顯現機制（無答案板書模式：不顯示答案）
     function toggleItemAnswer(el) {
@@ -1377,7 +1756,7 @@
         function startDraw(e) {
           if (!isPenMode) return;
           const target = e.target;
-          if (target && (target.closest('.tool-btn') || target.closest('button') || target.closest('a') || target.closest('.pen-options') || target.closest('.toc-menu'))) {
+          if (target && (target.closest('.tts-play-btn') || target.closest('.tool-btn') || target.closest('button') || target.closest('a') || target.closest('.tts-options') || target.closest('.pen-options') || target.closest('.toc-menu'))) {
             return;
           }
           isDrawing = true;
@@ -1454,9 +1833,18 @@
       });
     }
 
+    // 確保語音列表非同步載入
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initCanvases();
     });
   </script>
 </body>
 </html>
+
+
