@@ -1286,7 +1286,7 @@
       <div class="concept-box" style="margin-top: 8px; margin-bottom: 6px;">
         <div class="concept-title">
           <span>📊 題組二：段考相差分數（以國文 91 分為基準 0）</span>
-          <button class="tts-play-btn no-print" onclick="speakElement(this.closest('.concept-box'), event)" title="語音朗讀說明" data-audio="audio/unit1-1/btn_37.mp3">📢</button>
+          <button class="tts-play-btn no-print" onclick="speakExamQuiz(event)" title="語音朗讀說明" data-audio="audio/unit1-1/btn_37.mp3">📢</button>
         </div>
         <div style="font-size: 13pt;">
           阿晶第一次段考，以國文 91 分為基準，其他科目相差分數如下：
@@ -1636,6 +1636,14 @@
       const el = document.getElementById('matchArea');
       const btn = document.querySelector('#page-3 .tts-play-btn');
       const text = "第一部分：請將左側的生活情境，連到右側對應的正負數。左側題目：A. 賠 500 元，B. 零度以下 3 度，C. 向西走 6 公里，D. 體重減輕 4 公斤。右側選項：負 3、負 500、負 4、負 6。請在紙上動手連連看。";
+      playAudio(btn, text, el);
+    }
+
+    function speakExamQuiz(e) {
+      if (e) e.stopPropagation();
+      const el = document.querySelector('#page-5 .concept-box:nth-of-type(2)');
+      const btn = (e && e.target && e.target.closest('.tts-play-btn')) || null;
+      const text = "題組二：段考相差分數。以國文 91 分為基準 0。阿晶第一次段考，以國文 91 分為基準，其他科目相差分數如下：國文相差 0 分、英語相差正 7 分、數學相差負 4 分、公民相差正 8 分、生物相差負 2 分。";
       playAudio(btn, text, el);
     }
 

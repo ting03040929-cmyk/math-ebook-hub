@@ -22,7 +22,7 @@ window.MATH_UNITS = [
     grade: "七年級上學期",
     desc: "全套 5 頁特教闖關：正負數概念圖、相反量百寶箱、SVG 動態連連看、數線三要素找點、以及段考與體重生活基準量題組。",
     tags: ["正負數", "數線", "相反量", "基準點", "特教五關"],
-    ebookUrl: "unit1-1.html?v=4"
+    ebookUrl: "unit1-1.html?v=5"
   },
   {
     id: "unit-1-2",
@@ -32,7 +32,7 @@ window.MATH_UNITS = [
     grade: "七年級上學期",
     desc: "全套 5 頁特教關卡：大減小與小減大、同號負負相加、異號正負抵消、負負得正、數線兩點距離。4 階適性褪除鷹架，循序漸進解題。",
     tags: ["正負數加減", "數線距離", "負負得正", "4階鷹架"],
-    ebookUrl: "unit1-2.html?v=4"
+    ebookUrl: "unit1-2.html?v=5"
   },
   {
     id: "quiz-1",
